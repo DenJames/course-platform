@@ -126,7 +126,7 @@ const getStarWidth = (starPosition) => {
                     </div>
                 </div>
 
-                <div class="mt-auto">
+                <div class="mt-auto" v-if="!course.enrolled">
                     <button
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
                         @click.stop
