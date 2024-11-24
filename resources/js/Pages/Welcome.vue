@@ -135,6 +135,7 @@ const courses = [
         imageAlt: 'Vue logo',
         lessonCount: 8,
         rating: 100,
+        enrolled: false,
     },
     {
         title: 'Introduktion til React',
@@ -143,6 +144,7 @@ const courses = [
         imageAlt: 'React logo',
         lessonCount: 23,
         rating: 95,
+        enrolled: true,
     },
     {
         title: 'Introduktion til Tailwind CSS',
@@ -151,6 +153,7 @@ const courses = [
         imageAlt: 'Tailwind CSS logo',
         lessonCount: 29,
         rating: 70,
+        enrolled: false,
     },
     {
         title: 'Introduktion til Laravel',
@@ -159,6 +162,7 @@ const courses = [
         imageAlt: 'Laravel logo',
         lessonCount: 33,
         rating: 77,
+        enrolled: false,
     },
     {
         title: 'Introduktion til PHP',
@@ -167,6 +171,7 @@ const courses = [
         imageAlt: 'PHP logo',
         lessonCount: 20,
         rating: 80,
+        enrolled: true,
     },
     {
         title: 'Introduktion til Javascript',
@@ -175,6 +180,7 @@ const courses = [
         imageAlt: 'Javascript logo',
         lessonCount: 57,
         rating: 98,
+        enrolled: false,
     },
     {
         title: 'Introduktion til HTML',

@@ -48,7 +48,11 @@ const getStarWidth = (starPosition) => {
                 <p class="text-gray-600 dark:text-gray-400 text-sm">John doe</p>
                 <p class="text-gray-900 dark:text-white font-bold mt-2">100 DKK</p>
 
-                <div class="mt-14 block">
+                <div class="dark:text-gray-400 mt-2 text-sm font-bold italic" v-if="course.enrolled">
+                    Enrolled
+                </div>
+
+                <div class="mt-14 block" :class="{ 'hidden' : course.enrolled }">
                     <button
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
                         @click.stop
