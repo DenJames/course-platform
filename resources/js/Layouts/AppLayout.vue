@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -21,6 +21,8 @@ function toggleDarkMode() {
     html.classList.toggle('dark');
     isDarkMode.value = html.classList.contains('dark');
 
+    localStorage.setItem('darkMode', isDarkMode.value);
+
     setTimeout(() => {
         isAnimating.value = false;
     }, 500);
@@ -32,6 +34,12 @@ watch(isDarkMode, (newVal) => {
         html.classList.add('dark');
     } else {
         html.classList.remove('dark');
+    }
+});
+
+onMounted(() => {
+    if (localStorage.getItem('darkMode') === 'true') {
+        toggleDarkMode();
     }
 });
 </script>
