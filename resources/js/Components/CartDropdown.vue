@@ -91,6 +91,7 @@ onUnmounted(() => {
                     </div>
 
                     <Link
+                        v-if="cartStore.totalItems > 0"
                         :href="route('checkout')"
                         class="block w-full bg-purple-600 text-white text-center py-2 rounded-lg hover:bg-purple-700 transition-colors"
                     >

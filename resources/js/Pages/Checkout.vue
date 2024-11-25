@@ -214,6 +214,7 @@ const closeOrderSummary = () => {
 
                         <div class="mt-6 space-y-3">
                             <button
+                                v-if="cartStore.totalItems > 0"
                                 @click="handleSubmit"
                                 class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
                             >
