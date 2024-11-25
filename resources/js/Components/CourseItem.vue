@@ -24,10 +24,6 @@ const getStarWidth = (starPosition) => {
     // Calculate how filled this particular star should be
     return Math.max(0, Math.min(100, (rating - (starPosition - 1)) * 100));
 };
-
-function isInCart(course) {
-    return cartStore.isInCart(course);
-}
 </script>
 
 <template>
@@ -59,12 +55,20 @@ function isInCart(course) {
                     Enrolled
                 </div>
 
-                <div class="mt-14 block" v-if="!isInCart(course)">
+                <div class="mt-14 block">
                     <button
+                        v-if="!cartStore.isInCart(course)"
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
                         @click.stop="cartStore.addItem(course)"
                     >
                         Tilføj til kurv
+                    </button>
+
+                    <button
+                        v-else
+                        class="w-full bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
+                        @click.stop="cartStore.removeItem(course)">
+                        Fjern fra kurv
                     </button>
                 </div>
             </div>
@@ -134,12 +138,21 @@ function isInCart(course) {
                     </div>
                 </div>
 
-                <div class="mt-auto" v-if="!isInCart(course)">
+                <div class="mt-auto">
                     <button
+                        v-if="!cartStore.isInCart(course)"
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
                         @click.stop="cartStore.addItem(course)"
                     >
                         Tilføj til kurv
+                    </button>
+
+
+                    <button
+                        v-else
+                        class="w-full bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
+                        @click.stop="cartStore.removeItem(course)">
+                        Fjern fra kurv
                     </button>
                 </div>
             </div>

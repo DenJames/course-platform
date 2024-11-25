@@ -17,11 +17,13 @@ export const useCartStore = defineStore('cart', {
             this.items.push(item);
             this.saveToLocalStorage();
         },
-        removeItem(index) {
+        removeItem(item) {
+            const index = this.items.findIndex(i => i.id === item.id);
             this.items.splice(index, 1);
             this.saveToLocalStorage();
         },
         isInCart(item) {
+            // retrieve local storage and use that to check
             return this.items.some(i => i.id === item.id);
         },
         saveToLocalStorage() {
