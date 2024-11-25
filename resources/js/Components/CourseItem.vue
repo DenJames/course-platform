@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {ref} from 'vue';
 import {useCartStore} from "@/Stores/useCartStore.js";
 
 const props = defineProps({
@@ -8,6 +8,8 @@ const props = defineProps({
         required: true,
     }
 });
+
+const cartStore = useCartStore();
 
 const isOverlayVisible = ref(false);
 
@@ -23,10 +25,9 @@ const getStarWidth = (starPosition) => {
     return Math.max(0, Math.min(100, (rating - (starPosition - 1)) * 100));
 };
 
-onMounted(() => {
-    // Use the "useCartStore" and log the cart state
-    console.log(useCartStore().name);
-});
+function isInCart(course) {
+    return cartStore.isInCart(course);
+}
 </script>
 
 <template>
@@ -58,10 +59,10 @@ onMounted(() => {
                     Enrolled
                 </div>
 
-                <div class="mt-14 block" :class="{ 'hidden' : course.enrolled }">
+                <div class="mt-14 block" v-if="!isInCart(course)">
                     <button
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
-                        @click.stop
+                        @click.stop="cartStore.addItem(course)"
                     >
                         Tilføj til kurv
                     </button>
@@ -133,10 +134,10 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="mt-auto" v-if="!course.enrolled">
+                <div class="mt-auto" v-if="!isInCart(course)">
                     <button
                         class="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
-                        @click.stop
+                        @click.stop="cartStore.addItem(course)"
                     >
                         Tilføj til kurv
                     </button>

@@ -1,13 +1,31 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 
 export const useCartStore = defineStore('cart', {
-    state: () => ({ count: 0, name: 'Eduardo' }),
+    state: () => ({
+        items: JSON.parse(localStorage.getItem('cartItems')) || [],
+    }),
     getters: {
-        doubleCount: (state) => state.count * 2,
+        totalItems() {
+            return this.items.length;
+        },
+        totalPrice() {
+            return this.items.reduce((total, item) => total + item.price, 0);
+        }
     },
     actions: {
-        increment() {
-            this.count++
+        addItem(item) {
+            this.items.push(item);
+            this.saveToLocalStorage();
         },
+        removeItem(index) {
+            this.items.splice(index, 1);
+            this.saveToLocalStorage();
+        },
+        isInCart(item) {
+            return this.items.some(i => i.id === item.id);
+        },
+        saveToLocalStorage() {
+            localStorage.setItem('cartItems', JSON.stringify(this.items));
+        }
     },
-})
+});
