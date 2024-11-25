@@ -10,6 +10,7 @@ import MobileNav from "@/Components/Navigation/MobileNav.vue";
 import DesktopNav from "@/Components/Navigation/DesktopNav.vue";
 import CartIcon from "@/Components/Icons/CartIcon.vue";
 import {useCartStore} from "../Stores/useCartStore.js";
+import CartDropdown from "@/Components/CartDropdown.vue";
 
 const showingNavigationDropdown = ref(false);
 const isDarkMode = ref(document.querySelector('html').classList.contains('dark'));
@@ -103,13 +104,7 @@ onMounted(() => {
 
                 <div class="flex items-center">
                     <div class="flex gap-6 items-center">
-                        <Link :href="route('checkout')" class="relative">
-                            <CartIcon class="size-6 dark:text-gray-300"/>
-
-                            <div class="absolute size-5 rounded-full bg-purple-600 -top-2 -right-2 flex items-center justify-center text-purple-50 text-xs" v-if="useCartStore().totalItems > 0">
-                                {{ useCartStore().totalItems }}
-                            </div>
-                        </Link>
+                        <CartDropdown />
 
                         <button
                             @click.stop="toggleDarkMode"

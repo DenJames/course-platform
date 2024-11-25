@@ -22,6 +22,10 @@ export const useCartStore = defineStore('cart', {
             this.items.splice(index, 1);
             this.saveToLocalStorage();
         },
+        clearCart() {
+            this.items = [];
+            this.saveToLocalStorage();
+        },
         isInCart(item) {
             // retrieve local storage and use that to check
             return this.items.some(i => i.id === item.id);
