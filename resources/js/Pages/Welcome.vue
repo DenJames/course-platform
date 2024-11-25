@@ -22,6 +22,10 @@ defineProps({
         type: String,
         required: true,
     },
+    courses: {
+        type: Array,
+        required: true,
+    },
 });
 
 const scrollContainer = ref(null);
@@ -126,71 +130,6 @@ onUnmounted(() => {
         scrollContainer.value.removeEventListener('mousemove', drag);
     }
 });
-
-const courses = [
-    {
-        title: 'Introduktion til Vue 3',
-        description: 'Kom med, når vi tager dig igennem det basale i Vue 3, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'Vue logo',
-        lessonCount: 8,
-        rating: 100,
-        enrolled: false,
-    },
-    {
-        title: 'Introduktion til React',
-        description: 'Kom med, når vi tager dig igennem det basale i React, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'React logo',
-        lessonCount: 23,
-        rating: 95,
-        enrolled: true,
-    },
-    {
-        title: 'Introduktion til Tailwind CSS',
-        description: 'Kom med når vi tager dig igennem det basale i Tailwind CSS, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'Tailwind CSS logo',
-        lessonCount: 29,
-        rating: 70,
-        enrolled: false,
-    },
-    {
-        title: 'Introduktion til Laravel',
-        description: 'Kom med når vi tager dig igennem det basale i Laravel, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'Laravel logo',
-        lessonCount: 33,
-        rating: 77,
-        enrolled: false,
-    },
-    {
-        title: 'Introduktion til PHP',
-        description: 'Kom med når vi tager dig igennem det basale i PHP, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'PHP logo',
-        lessonCount: 20,
-        rating: 80,
-        enrolled: true,
-    },
-    {
-        title: 'Introduktion til Javascript',
-        description: 'Kom med når vi tager dig igennem det basale i Javascript, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'Javascript logo',
-        lessonCount: 57,
-        rating: 98,
-        enrolled: false,
-    },
-    {
-        title: 'Introduktion til HTML',
-        description: 'Kom med når vi tager dig igennem det basale i HTML, i dette interaktive kursus.',
-        imageUrl: 'https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg',
-        imageAlt: 'HTML logo',
-        lessonCount: 60,
-        rating: 95,
-    },
-];
 
 const stars = [1, 2, 3, 4, 5];
 

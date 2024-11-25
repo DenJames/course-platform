@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
+import {useCartStore} from "@/Stores/useCartStore.js";
 
 const props = defineProps({
     course: {
@@ -16,11 +17,16 @@ const toggleOverlay = () => {
 
 const getStarWidth = (starPosition) => {
     // Convert 0-100 rating to 0-5 scale
-    const rating = props.course.rating / 20;
+    const rating = props.course.avarage_rating;
 
     // Calculate how filled this particular star should be
     return Math.max(0, Math.min(100, (rating - (starPosition - 1)) * 100));
 };
+
+onMounted(() => {
+    // Use the "useCartStore" and log the cart state
+    console.log(useCartStore().name);
+});
 </script>
 
 <template>
@@ -37,16 +43,16 @@ const getStarWidth = (starPosition) => {
 
             <!-- Background Image -->
             <img
-                :src="course.imageUrl"
-                :alt="course.imageAlt"
+                :src="course.image"
+                :alt="course.title"
                 class="w-full h-40"
             >
 
             <!-- Base Content -->
             <div class="absolute left-0 right-0 p-3 h-full">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">John doe</p>
-                <p class="text-gray-900 dark:text-white font-bold mt-2">100 DKK</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ course.author.name }}</p>
+                <p class="text-gray-900 dark:text-white font-bold mt-2">{{ course.price }} DKK</p>
 
                 <div class="dark:text-gray-400 mt-2 text-sm font-bold italic" v-if="course.enrolled">
                     Enrolled
@@ -86,11 +92,12 @@ const getStarWidth = (starPosition) => {
             <div class="p-6 h-full flex flex-col">
                 <div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Udgivet af: John doe</p>
+                    <p>{{ course.description }}</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Udgivet af: {{ course.author.name }}</p>
 
                     <!-- Course Stats -->
                     <div class="flex items-center gap-2 mb-4">
-                        <span class="text-gray-900 dark:text-white">{{ (course.rating / 20).toFixed(1) }}</span>
+                        <span class="text-gray-900 dark:text-white">{{ (props.course.avarage_rating).toFixed(1) }}</span>
                         <div class="flex gap-1">
                             <div v-for="i in 5" :key="i" class="relative">
                                 <!-- Background star (empty) -->
@@ -105,7 +112,7 @@ const getStarWidth = (starPosition) => {
                                 </div>
                             </div>
                         </div>
-                        <span class="text-gray-500 dark:text-gray-400 text-sm text-nowrap">(123 anmeldelser)</span>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm text-nowrap">({{ course.total_ratings }} anmeldelser)</span>
                     </div>
 
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ course.description }}</p>
@@ -115,7 +122,7 @@ const getStarWidth = (starPosition) => {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" />
                             </svg>
-                            <span class="text-sm">{{ course.lessonCount }} lektioner</span>
+                            <span class="text-sm">{{ course.lessons_count }} lektioner</span>
                         </div>
                         <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

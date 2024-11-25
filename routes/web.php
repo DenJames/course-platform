@@ -1,18 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Course;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'courses' => Course::with(['author'])->get(),
     ]);
-});
+})->name('welcome');
 
 // Checkout
 Route::get('/checkout', function () {
@@ -20,7 +18,7 @@ Route::get('/checkout', function () {
 })->name('checkout');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Welcome');
+    return to_route('welcome');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
