@@ -35,8 +35,11 @@ return [
     |
     */
 
-    'mailers' => [
+    'paths' => [
+        resource_path('views/mail'),
+    ],
 
+    'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),

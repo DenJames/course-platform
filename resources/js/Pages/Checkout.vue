@@ -93,6 +93,7 @@ const formattedDate = computed(() => {
 });
 
 const page = usePage();
+const userExists = ref(false);
 
 onMounted(() => {
     if (page.props.auth.user) {
@@ -102,11 +103,20 @@ onMounted(() => {
 });
 
 const handleSubmit = () => {
+    if (step.value === 2) {
+        axios.post(route('check.user.existence'), form.value.personal)
+            .then(response => {
+                console.log(response.data);
+                userExists.value = response.data.exists;
+            });
+    }
+
     if (step.value < 3) {
         step.value++;
     } else {
         showOrderSummary.value = true;
-        // TODO: Backend handling
+
+        router.post(route('user.store'), form.value.personal);
     }
 };
 
@@ -115,6 +125,12 @@ const closeOrderSummary = () => {
     cartStore.clearCart();
     router.visit(route('dashboard'));
 };
+
+onMounted(() => {
+    if (page.props.auth.user) {
+        userExists.value = true;
+    }
+});
 </script>
 
 <template>
@@ -244,6 +260,7 @@ const closeOrderSummary = () => {
                         <h2 class="text-2xl font-semibold">Ordrebekræftelse #{{ orderId }}</h2>
                         <p class="text-gray-600 dark:text-gray-400">{{ formattedDate }}</p>
                     </div>
+
                     <button @click="closeOrderSummary"
                             class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -252,6 +269,10 @@ const closeOrderSummary = () => {
                                   d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
+                </div>
+
+                <div class="my-4 rounded-md bg-green-400 text-green-50 py-2 px-4 text-center w-full" v-if="!userExists">
+                    Vi har sendt en oprettelses mail til dig.
                 </div>
 
                 <div class="space-y-6">
