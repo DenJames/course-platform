@@ -11,7 +11,9 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'courses' => Course::with(['author'])->get(),
+        'courses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
+        'recommendedCourses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
+        'bestSellingCourses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
     ]);
 })->name('welcome');
 

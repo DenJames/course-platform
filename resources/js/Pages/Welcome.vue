@@ -8,17 +8,15 @@ import ChevronLeftIcon from "@/Components/Icons/ChevronLeftIcon.vue";
 import ChevronRightIcon from "@/Components/Icons/ChevronRightIcon.vue";
 
 defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
-    laravelVersion: {
-        type: String,
-        required: true,
-    },
-    phpVersion: {
-        type: String,
-        required: true,
-    },
     courses: {
+        type: Array,
+        required: true,
+    },
+    recommendedCourses: {
+        type: Array,
+        required: true,
+    },
+    bestSellingCourses: {
         type: Array,
         required: true,
     },
@@ -257,7 +255,7 @@ onMounted(() => {
                 <div
                     ref="recommendedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <template v-for="(course, index) in courses" :key="index">
+                    <template v-for="(course, index) in recommendedCourses" :key="index">
                         <CourseItem :course="course" class="flex-shrink-0 course-item"/>
                     </template>
                 </div>
@@ -287,7 +285,7 @@ onMounted(() => {
                 <div
                     ref="topRatedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <template v-for="(course, index) in courses" :key="index">
+                    <template v-for="(course, index) in bestSellingCourses" :key="index">
                         <CourseItem :course="course" class="flex-shrink-0 course-item"/>
                     </template>
                 </div>

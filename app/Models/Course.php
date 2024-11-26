@@ -45,7 +45,7 @@ class Course extends Model
     protected function avarageRating(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->ratings->avg('rating'),
+            get: fn () => $this->ratings->avg('rating') ?? 0,
         );
     }
 

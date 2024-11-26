@@ -184,7 +184,7 @@ const addToCartAndCheckout = () => {
                     </div>
 
                     <strong class="text-sm dark:text-gray-200">Beskrivelse:</strong>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ course.description }}</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{  course.description.length > 40 ? course.description.substring(0, 80) + '...' :  course.description }}</p>
 
                     <strong class="text-sm mb-1 dark:text-gray-200">Indhold:</strong>
                     <div class="space-y-2 mb-4">
