@@ -205,7 +205,7 @@ onMounted(() => {
         </div>
 
         <!-- Your Courses Section -->
-        <div class="w-full relative">
+        <div class="w-full relative" v-if="$page.props.auth.user">
             <button
                 @click="scrollOneLeft(yourCoursesContainer, carouselStates.yourCourses)"
                 :disabled="!carouselStates.yourCourses.value.canScrollRight"

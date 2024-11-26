@@ -2,19 +2,19 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import { useCartStore } from "@/Stores/useCartStore.js";
-import { onMounted, ref, computed } from "vue";
-import { usePage, router } from "@inertiajs/vue3";
+import {useCartStore} from "@/Stores/useCartStore.js";
+import {onMounted, ref, computed} from "vue";
+import {usePage, router} from "@inertiajs/vue3";
 
 const step = ref(1);
 const cartStore = useCartStore();
 const showOrderSummary = ref(false);
 const orderId = ref(Math.random().toString(36).slice(2, 8).toUpperCase());
+const errors = ref({});
 
 const steps = [
-    { number: 1, title: 'Information' },
-    { number: 2, title: 'Platform' },
-    { number: 3, title: 'Betaling' }
+    {number: 1, title: 'Information'},
+    {number: 2, title: 'Betaling'}
 ];
 
 const form = ref({
@@ -23,11 +23,6 @@ const form = ref({
         email: '',
         phone: '',
     },
-    platform: {
-        github: '',
-        preferred_platform: '',
-        notifications: '',
-    },
     payment: {
         card: '',
         expiry: '',
@@ -35,53 +30,106 @@ const form = ref({
     }
 });
 
-const platformOptions = [
-    {value: 'email', label: 'Email'},
-    {value: 'web', label: 'Web Platform'}
-];
-
-const notificationOptions = [
-    {value: 'daily', label: 'Dagligt'},
-    {value: 'weekly', label: 'Ugentligt'},
-    {value: 'monthly', label: 'Månedligt'},
-    {value: 'none', label: 'Ingen'}
-];
-
 const currentStepFields = computed(() => {
     switch (step.value) {
         case 1:
             return [
-                {label: 'Navn', key: 'name', type: 'text', group: 'personal'},
-                {label: 'E-mail', key: 'email', type: 'email', group: 'personal'},
-                {label: 'Telefon', key: 'phone', type: 'tel', group: 'personal'}
+                {
+                    label: 'Navn',
+                    key: 'name',
+                    type: 'text',
+                    group: 'personal',
+                    placeholder: 'Dit fulde navn',
+                    required: true
+                },
+                {
+                    label: 'E-mail',
+                    key: 'email',
+                    type: 'email',
+                    group: 'personal',
+                    placeholder: 'din@email.dk',
+                    required: true
+                },
+                {
+                    label: 'Telefon',
+                    key: 'phone',
+                    type: 'tel',
+                    group: 'personal',
+                    placeholder: '+45 12345678',
+                    required: false
+                }
             ];
         case 2:
             return [
                 {
-                    label: 'Github Brugernavn',
-                    key: 'github',
+                    label: 'Kortnummer',
+                    key: 'card',
                     type: 'text',
-                    group: 'platform',
-                    placeholder: 'fx: user#1234'
+                    group: 'payment',
+                    placeholder: '1234 5678 9012 3456',
+                    required: true
                 },
                 {
-                    label: 'Foretrukken leverings Platform',
-                    key: 'preferred_platform',
-                    type: 'select',
-                    group: 'platform',
-                    options: platformOptions
+                    label: 'Udløbsdato',
+                    key: 'expiry',
+                    type: 'text',
+                    group: 'payment',
+                    placeholder: 'MM/YY',
+                    required: true
                 },
-            ];
-        case 3:
-            return [
-                {label: 'Kortnummer', key: 'card', type: 'text', group: 'payment'},
-                {label: 'Udløbsdato', key: 'expiry', type: 'text', group: 'payment'},
-                {label: 'CVC', key: 'cvc', type: 'text', group: 'payment'}
+                {
+                    label: 'CVC',
+                    key: 'cvc',
+                    type: 'text',
+                    group: 'payment',
+                    placeholder: '123',
+                    required: true
+                }
             ];
         default:
             return [];
     }
 });
+
+const validateField = (field, value) => {
+    errors.value[field] = [];
+
+    switch (field) {
+        case 'personal.name':
+            if (!value) errors.value[field] = ['Navn er påkrævet'];
+            else if (value.length < 2) errors.value[field] = ['Navn skal være mindst 2 tegn'];
+            break;
+
+        case 'personal.email':
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!value) errors.value[field] = ['Email er påkrævet'];
+            else if (!emailRegex.test(value)) errors.value[field] = ['Ugyldig email adresse'];
+            break;
+
+        case 'personal.phone':
+            const phoneRegex = /^(\+45|0045|\(45\))?\s?[0-9]{8}$/;
+            if (value && !phoneRegex.test(value)) errors.value[field] = ['Ugyldigt telefonnummer'];
+            break;
+
+        case 'payment.card':
+            const cardRegex = /^[0-9]{16}$/;
+            if (!value) errors.value[field] = ['Kortnummer er påkrævet'];
+            else if (!cardRegex.test(value.replace(/\s/g, ''))) errors.value[field] = ['Ugyldigt kortnummer'];
+            break;
+
+        case 'payment.expiry':
+            const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+            if (!value) errors.value[field] = ['Udløbsdato er påkrævet'];
+            else if (!expiryRegex.test(value)) errors.value[field] = ['Ugyldig udløbsdato (MM/YY)'];
+            break;
+
+        case 'payment.cvc':
+            const cvcRegex = /^[0-9]{3,4}$/;
+            if (!value) errors.value[field] = ['CVC er påkrævet'];
+            else if (!cvcRegex.test(value)) errors.value[field] = ['Ugyldig CVC'];
+            break;
+    }
+};
 
 const formattedDate = computed(() => {
     const date = new Date();
@@ -92,6 +140,39 @@ const formattedDate = computed(() => {
     });
 });
 
+const hasErrors = computed(() => {
+    return Object.keys(errors.value).some(key => errors.value[key]?.length > 0);
+});
+
+const isStepValid = computed(() => {
+    const fields = currentStepFields.value;
+
+    // Check if all required fields are filled
+    const allRequiredFieldsFilled = fields.every(field => {
+        if (!field.required) return true;
+        const value = form.value[field.group][field.key];
+        return value && value.trim() !== '';
+    });
+
+    // Check if there are no errors
+    return allRequiredFieldsFilled && !hasErrors.value;
+});
+
+const validateCurrentStep = () => {
+    const fields = currentStepFields.value;
+    let isValid = true;
+
+    fields.forEach(field => {
+        const fullKey = `${field.group}.${field.key}`;
+        const value = form.value[field.group][field.key];
+
+        validateField(fullKey, value);
+        if (errors.value[fullKey]?.length > 0) isValid = false;
+    });
+
+    return isValid;
+};
+
 const page = usePage();
 const userExists = ref(false);
 
@@ -99,23 +180,19 @@ onMounted(() => {
     if (page.props.auth.user) {
         form.value.personal.name = page.props.auth.user.name;
         form.value.personal.email = page.props.auth.user.email;
+        userExists.value = true;
     }
 });
 
 const handleSubmit = () => {
-    if (step.value === 2) {
-        axios.post(route('check.user.existence'), form.value.personal)
-            .then(response => {
-                console.log(response.data);
-                userExists.value = response.data.exists;
-            });
+    if (!validateCurrentStep()) {
+        return;
     }
 
-    if (step.value < 3) {
+    if (step.value < 2) {
         step.value++;
     } else {
         showOrderSummary.value = true;
-
         router.post(route('user.store'), form.value.personal);
     }
 };
@@ -125,12 +202,6 @@ const closeOrderSummary = () => {
     cartStore.clearCart();
     router.visit(route('welcome'));
 };
-
-onMounted(() => {
-    if (page.props.auth.user) {
-        userExists.value = true;
-    }
-});
 </script>
 
 <template>
@@ -138,11 +209,12 @@ onMounted(() => {
 
     <AppLayout>
         <div class="max-w-5xl mx-auto px-4 py-8 md:py-16 dark:text-gray-200">
+            <!-- Progress Bar -->
             <div class="w-full flex items-center justify-between relative">
                 <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-400">
                     <div
                         class="h-full bg-purple-600 transition-all duration-300"
-                        :style="{ width: `${Math.min(((step - 1) / 2 * 100) + 25, 100)}%` }"
+                        :style="{ width: `${Math.min(((step - 1) / 1 * 100) + 50, 100)}%` }"
                     ></div>
                 </div>
 
@@ -175,54 +247,44 @@ onMounted(() => {
                                     class="md:col-span-2"
                                 >
                                     <InputLabel :value="field.label" class="mb-1"/>
-                                    <template v-if="field.type === 'select'">
-                                        <select
-                                            v-model="form[field.group][field.key]"
-                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                            required
-                                        >
-                                            <option value="" disabled selected>Vælg en mulighed</option>
-                                            <option
-                                                v-for="option in field.options"
-                                                :key="option.value"
-                                                :value="option.value"
-                                            >
-                                                {{ option.label }}
-                                            </option>
-                                        </select>
-                                    </template>
                                     <TextInput
-                                        v-else
                                         v-model="form[field.group][field.key]"
                                         :type="field.type"
                                         :placeholder="field.placeholder"
                                         class="w-full"
-                                        required
+                                        :required="field.required"
+                                        @input="validateField(`${field.group}.${field.key}`, form[field.group][field.key])"
                                     />
+                                    <div v-if="errors[`${field.group}.${field.key}`]?.length"
+                                         class="text-red-500 text-sm mt-1">
+                                        {{ errors[`${field.group}.${field.key}`][0] }}
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="mt-6 space-y-3">
+                                <button
+                                    v-if="cartStore.totalItems > 0"
+                                    type="submit"
+                                    :disabled="!isStepValid"
+                                    class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
+                                >
+                                    {{ step === 2 ? 'Gennemfør køb' : 'Fortsæt' }}
+                                </button>
+
+                                <button
+                                    v-if="step > 1"
+                                    @click.prevent="step--"
+                                    class="w-full py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                >
+                                    Tilbage
+                                </button>
+                            </div>
                         </form>
-
-                        <div class="mt-6 space-y-3">
-                            <button
-                                v-if="cartStore.totalItems > 0"
-                                @click="handleSubmit"
-                                class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-                            >
-                                {{ step === 3 ? 'Gennemfør køb' : 'Fortsæt' }}
-                            </button>
-
-                            <button
-                                v-if="step > 1"
-                                @click="step--"
-                                class="w-full py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                            >
-                                Tilbage
-                            </button>
-                        </div>
                     </div>
                 </div>
 
+                <!-- Cart Summary -->
                 <div class="w-full lg:w-1/3">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                         <h2 class="text-2xl font-semibold mb-6 dark:text-gray-200">Dine kurser</h2>
@@ -277,19 +339,11 @@ onMounted(() => {
 
                 <div class="space-y-6">
                     <!-- Customer Info -->
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="font-medium mb-2">Kundeoplysninger</h3>
-                            <p>{{ form.personal.name }}</p>
-                            <p>{{ form.personal.email }}</p>
-                            <p>{{ form.personal.phone }}</p>
-                        </div>
-                        <div>
-                            <h3 class="font-medium mb-2">Platform Indstillinger</h3>
-                            <p>Github: {{ form.platform.github }}</p>
-                            <p>Platform:
-                                {{ platformOptions.find(o => o.value === form.platform.preferred_platform)?.label }}</p>
-                        </div>
+                    <div>
+                        <h3 class="font-medium mb-2">Kundeoplysninger</h3>
+                        <p>{{ form.personal.name }}</p>
+                        <p>{{ form.personal.email }}</p>
+                        <p>{{ form.personal.phone }}</p>
                     </div>
 
                     <!-- Order Items -->
@@ -325,3 +379,52 @@ onMounted(() => {
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Progress bar and modal transitions */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+    transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+/* Form validation styles */
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.invalid-input {
+    border-color: #ef4444 !important;
+}
+
+/* Progress bar animation */
+@keyframes progress {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.progress-animation {
+    animation: progress 0.5s ease-out;
+}
+</style>
