@@ -123,7 +123,7 @@ const handleSubmit = () => {
 const closeOrderSummary = () => {
     showOrderSummary.value = false;
     cartStore.clearCart();
-    router.visit(route('dashboard'));
+    router.visit(route('welcome'));
 };
 
 onMounted(() => {
@@ -137,7 +137,7 @@ onMounted(() => {
     <Head title="Checkout"/>
 
     <AppLayout>
-        <div class="max-w-5xl mx-auto px-4 py-8 md:py-16">
+        <div class="max-w-5xl mx-auto px-4 py-8 md:py-16 dark:text-gray-200">
             <div class="w-full flex items-center justify-between relative">
                 <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-400">
                     <div
@@ -149,7 +149,7 @@ onMounted(() => {
                 <div
                     v-for="s in steps"
                     :key="s.number"
-                    class="size-14 rounded-full flex items-center justify-center text-white text-lg z-10 transition-colors duration-300"
+                    class="size-14 rounded-full flex items-center justify-center text-white text-lg z-10 transition-colors duration-300 dark:text-gray-200"
                     :class="[step >= s.number ? 'bg-purple-600' : 'bg-gray-400']"
                 >
                     {{ s.number }}
@@ -202,31 +202,6 @@ onMounted(() => {
                                 </div>
                             </div>
                         </form>
-                    </div>
-                </div>
-
-                <div class="w-full lg:w-1/3">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                        <h2 class="text-2xl font-semibold mb-6">Dine kurser</h2>
-
-                        <div class="space-y-4">
-                            <div v-for="item in cartStore.items" :key="item.id"
-                                 class="flex items-center gap-4 pb-4 border-b dark:border-gray-700">
-                                <img :src="item.image" :alt="item.title"
-                                     class="w-16 h-16 object-cover rounded"/>
-                                <div class="flex-1">
-                                    <h3 class="font-medium dark:text-gray-200">{{ item.title }}</h3>
-                                    <p class="text-gray-600 dark:text-gray-400">{{ item.price }} kr.</p>
-                                </div>
-                            </div>
-
-                            <div class="border-t pt-4 mt-4">
-                                <div class="flex justify-between font-semibold">
-                                    <span>Total</span>
-                                    <span>{{ cartStore.totalPrice }} kr.</span>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="mt-6 space-y-3">
                             <button
@@ -247,12 +222,37 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
+
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                        <h2 class="text-2xl font-semibold mb-6 dark:text-gray-200">Dine kurser</h2>
+
+                        <div class="space-y-4">
+                            <div v-for="item in cartStore.items" :key="item.id"
+                                 class="flex items-center gap-4 pb-4 border-b dark:border-gray-700">
+                                <img :src="item.image" :alt="item.title"
+                                     class="w-16 h-16 object-cover rounded"/>
+                                <div class="flex-1">
+                                    <h3 class="font-medium dark:text-gray-200">{{ item.title }}</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">{{ item.price }} kr.</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 mt-4">
+                                <div class="flex justify-between font-semibold dark:text-gray-200">
+                                    <span>Total</span>
+                                    <span>{{ cartStore.totalPrice }} kr.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Order Summary Modal -->
         <div v-if="showOrderSummary"
-             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 dark:text-gray-200">
             <div
                 class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
                 <div class="flex justify-between items-start mb-6">
@@ -309,7 +309,7 @@ onMounted(() => {
                     </div>
 
                     <!-- Total -->
-                    <div class="border-t pt-4">
+                    <div class="pt-4">
                         <div class="flex justify-between font-semibold text-lg">
                             <span>Total</span>
                             <span>{{ cartStore.totalPrice }} kr.</span>

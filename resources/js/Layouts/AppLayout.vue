@@ -3,25 +3,20 @@ import {computed, onMounted, ref, watch} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
 import MobileNav from "@/Components/Navigation/MobileNav.vue";
 import DesktopNav from "@/Components/Navigation/DesktopNav.vue";
-import CartIcon from "@/Components/Icons/CartIcon.vue";
-import {useCartStore} from "../Stores/useCartStore.js";
 import CartDropdown from "@/Components/CartDropdown.vue";
+import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
-const isDarkMode = ref(document.querySelector('html').classList.contains('dark'));
+const isDarkMode = ref(false);
 const isAnimating = ref(false);
+
+isDarkMode.value = localStorage.getItem('darkMode') === 'true';
 
 function toggleDarkMode() {
     isAnimating.value = true;
-    const html = document.querySelector('html');
-    html.classList.toggle('dark');
-    isDarkMode.value = html.classList.contains('dark');
-
+    isDarkMode.value = !isDarkMode.value;
     localStorage.setItem('darkMode', isDarkMode.value);
 
     setTimeout(() => {
@@ -29,6 +24,7 @@ function toggleDarkMode() {
     }, 500);
 }
 
+// Watch for dark mode changes and update DOM
 watch(isDarkMode, (newVal) => {
     const html = document.querySelector('html');
     if (newVal) {
@@ -36,12 +32,43 @@ watch(isDarkMode, (newVal) => {
     } else {
         html.classList.remove('dark');
     }
+}, { immediate: true }); // Add immediate: true to apply on initial load
+
+// Set initial dark mode state on mount
+onMounted(() => {
+    // Check if theme was stored
+    const storedTheme = localStorage.getItem('darkMode');
+    if (storedTheme !== null) {
+        // Convert stored string to boolean and set state
+        isDarkMode.value = storedTheme === 'true';
+    } else {
+        // If no stored preference, check system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        isDarkMode.value = prefersDark;
+        localStorage.setItem('darkMode', prefersDark);
+    }
+
+    // Set initial class
+    const html = document.querySelector('html');
+    if (isDarkMode.value) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
 });
 
+// Watch for system theme changes
 onMounted(() => {
-    if (localStorage.getItem('darkMode') === 'true') {
-        toggleDarkMode();
-    }
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e) => {
+        if (localStorage.getItem('darkMode') === null) {
+            isDarkMode.value = e.matches;
+            localStorage.setItem('darkMode', e.matches);
+        }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
 });
 </script>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,19 @@ Route::get('/', function () {
         'courses' => Course::with(['author'])->get(),
     ]);
 })->name('welcome');
+
+// course category
+Route::get('/courses/{category:slug}', function (Category $category) {
+    return Inertia::render('Courses', [
+        'courses' => Course::where('category_id', $category->id)->with(['author'])->get(),
+        'category' => $category,
+    ]);
+})->name('courses.category');
+
+// Cart
+Route::get('/cart', function () {
+    return Inertia::render('Cart');
+})->name('cart');
 
 // Checkout
 Route::get('/checkout', function () {

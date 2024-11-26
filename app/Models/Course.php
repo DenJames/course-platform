@@ -37,6 +37,11 @@ class Course extends Model
         return $this->hasMany(CourseRating::class);
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     protected function avarageRating(): Attribute
     {
         return Attribute::make(

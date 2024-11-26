@@ -8,12 +8,8 @@ import ChevronLeftIcon from "@/Components/Icons/ChevronLeftIcon.vue";
 import ChevronRightIcon from "@/Components/Icons/ChevronRightIcon.vue";
 
 defineProps({
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
+    canLogin: Boolean,
+    canRegister: Boolean,
     laravelVersion: {
         type: String,
         required: true,
@@ -28,126 +24,161 @@ defineProps({
     },
 });
 
-const scrollContainer = ref(null);
-const isAnimating = ref(false);
-const canScrollLeft = ref(false);
-const canScrollRight = ref(false);
-const isDragging = ref(false);
-const startX = ref(0);
-const scrollLeft = ref(0);
+// Create refs for each carousel section
+const yourCoursesContainer = ref(null);
+const recommendedContainer = ref(null);
+const topRatedContainer = ref(null);
 
-const getCourseWidth = () => {
-    const courseElement = scrollContainer.value?.querySelector('.course-item');
+// Separate scroll states for each carousel
+const carouselStates = {
+    yourCourses: ref({
+        isAnimating: false,
+        canScrollLeft: false,
+        canScrollRight: false,
+        isDragging: false,
+        startX: 0,
+        scrollLeft: 0
+    }),
+    recommended: ref({
+        isAnimating: false,
+        canScrollLeft: false,
+        canScrollRight: false,
+        isDragging: false,
+        startX: 0,
+        scrollLeft: 0
+    }),
+    topRated: ref({
+        isAnimating: false,
+        canScrollLeft: false,
+        canScrollRight: false,
+        isDragging: false,
+        startX: 0,
+        scrollLeft: 0
+    })
+};
+
+const getCourseWidth = (container) => {
+    const courseElement = container?.querySelector('.course-item');
     if (courseElement) {
-        // Get width including gap (24px = gap-6)
-        return courseElement.offsetWidth + 24;
+        return courseElement.offsetWidth + 24; // 24px = gap-6
     }
-
     return 0;
 };
 
-const scrollOneRight = () => {
-    if (scrollContainer.value && !isAnimating.value && canScrollLeft.value) {
-        isAnimating.value = true;
-        const courseWidth = getCourseWidth();
+const scrollOneRight = (container, state) => {
+    if (container && !state.value.isAnimating && state.value.canScrollLeft) {
+        state.value.isAnimating = true;
+        const courseWidth = getCourseWidth(container);
 
-        scrollContainer.value.scrollBy({
+        container.scrollBy({
             left: courseWidth,
             behavior: 'smooth'
         });
 
         setTimeout(() => {
-            isAnimating.value = false;
+            state.value.isAnimating = false;
         }, 500);
     }
 };
 
-const scrollOneLeft = () => {
-    if (scrollContainer.value && !isAnimating.value && canScrollRight.value) {
-        isAnimating.value = true;
-        const courseWidth = getCourseWidth();
+const scrollOneLeft = (container, state) => {
+    if (container && !state.value.isAnimating && state.value.canScrollRight) {
+        state.value.isAnimating = true;
+        const courseWidth = getCourseWidth(container);
 
-        scrollContainer.value.scrollBy({
+        container.scrollBy({
             left: -courseWidth,
             behavior: 'smooth'
         });
 
         setTimeout(() => {
-            isAnimating.value = false;
+            state.value.isAnimating = false;
         }, 500);
     }
 };
 
-const updateScrollButtons = () => {
-    if (scrollContainer.value) {
-        const container = scrollContainer.value;
-        canScrollLeft.value = container.scrollLeft < (container.scrollWidth - container.offsetWidth);
-        canScrollRight.value = container.scrollLeft > 0;
+const updateScrollButtons = (container, state) => {
+    if (container) {
+        state.value.canScrollLeft = container.scrollLeft < (container.scrollWidth - container.offsetWidth);
+        state.value.canScrollRight = container.scrollLeft > 0;
     }
 };
 
-// Drag to scroll functionality
-const startDragging = (e) => {
-    isDragging.value = true;
-    startX.value = e.pageX - scrollContainer.value.offsetLeft;
-    scrollLeft.value = scrollContainer.value.scrollLeft;
-    scrollContainer.value.style.cursor = 'grabbing';
-    scrollContainer.value.style.userSelect = 'none';
-};
+const setupDragHandlers = (container, state) => {
+    const startDragging = (e) => {
+        state.value.isDragging = true;
+        state.value.startX = e.pageX - container.offsetLeft;
+        state.value.scrollLeft = container.scrollLeft;
+        container.style.cursor = 'grabbing';
+        container.style.userSelect = 'none';
+    };
 
-const stopDragging = () => {
-    isDragging.value = false;
-    scrollContainer.value.style.cursor = 'grab';
-    scrollContainer.value.style.userSelect = '';
-};
+    const stopDragging = () => {
+        state.value.isDragging = false;
+        container.style.cursor = 'grab';
+        container.style.userSelect = '';
+    };
 
-const drag = (e) => {
-    if (!isDragging.value) return;
-    e.preventDefault();
-    const x = e.pageX - scrollContainer.value.offsetLeft;
-    const walk = (x - startX.value);
-    scrollContainer.value.scrollLeft = scrollLeft.value - walk;
+    const drag = (e) => {
+        if (!state.value.isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - state.value.startX);
+        container.scrollLeft = state.value.scrollLeft - walk;
+    };
+
+    container.addEventListener('mousedown', startDragging);
+    container.addEventListener('mouseleave', stopDragging);
+    container.addEventListener('mouseup', stopDragging);
+    container.addEventListener('mousemove', drag);
+    container.style.cursor = 'grab';
+
+    return () => {
+        container.removeEventListener('mousedown', startDragging);
+        container.removeEventListener('mouseleave', stopDragging);
+        container.removeEventListener('mouseup', stopDragging);
+        container.removeEventListener('mousemove', drag);
+    };
 };
 
 onMounted(() => {
-    if (scrollContainer.value) {
-        scrollContainer.value.addEventListener('scroll', updateScrollButtons);
-        scrollContainer.value.addEventListener('mousedown', startDragging);
-        scrollContainer.value.addEventListener('mouseleave', stopDragging);
-        scrollContainer.value.addEventListener('mouseup', stopDragging);
-        scrollContainer.value.addEventListener('mousemove', drag);
-        scrollContainer.value.style.cursor = 'grab';
-        updateScrollButtons();
-    }
+    // Setup scroll and drag handlers for each carousel
+    const containers = {
+        yourCourses: yourCoursesContainer.value,
+        recommended: recommendedContainer.value,
+        topRated: topRatedContainer.value
+    };
+
+    const cleanupFns = [];
+
+    Object.entries(containers).forEach(([key, container]) => {
+        if (container) {
+            const state = carouselStates[key];
+            const updateScroll = () => updateScrollButtons(container, state);
+            container.addEventListener('scroll', updateScroll);
+            cleanupFns.push(() => container.removeEventListener('scroll', updateScroll));
+
+            const dragCleanup = setupDragHandlers(container, state);
+            cleanupFns.push(dragCleanup);
+
+            updateScroll();
+        }
+    });
+
+    onUnmounted(() => {
+        cleanupFns.forEach(fn => fn());
+    });
 });
-
-onUnmounted(() => {
-    if (scrollContainer.value) {
-        scrollContainer.value.removeEventListener('scroll', updateScrollButtons);
-        scrollContainer.value.removeEventListener('mousedown', startDragging);
-        scrollContainer.value.removeEventListener('mouseleave', stopDragging);
-        scrollContainer.value.removeEventListener('mouseup', stopDragging);
-        scrollContainer.value.removeEventListener('mousemove', drag);
-    }
-});
-
-const stars = [1, 2, 3, 4, 5];
-
-function handleImageError() {
-    document.getElementById('screenshot-container')?.classList.add('!hidden');
-    document.getElementById('docs-card')?.classList.add('!row-span-1');
-    document.getElementById('docs-card-content')?.classList.add('!flex-row');
-    document.getElementById('background')?.classList.add('!hidden');
-}
 </script>
 
 <template>
     <Head title="Welcome"/>
 
     <AppLayout>
+        <!-- User welcome section remains unchanged -->
         <div v-if="$page.props.auth.user" class="flex gap-2 items-center">
             <div class="bg-purple-500 rounded-full w-16 h-16 flex items-center justify-center mt-10">
-                <h2 class="font-bold text-2xl text-white">DE</h2>
+                <h2 class="font-bold text-2xl dark:text-gray-200 text-white">DE</h2>
             </div>
 
             <div class="flex flex-col dark:text-gray-200 mt-10">
@@ -156,34 +187,110 @@ function handleImageError() {
             </div>
         </div>
 
-        <div class="mt-10 hidden md:block">
-            <img src="https://cdn.pixabay.com/photo/2016/05/27/08/51/mobile-phone-1419275_960_720.jpg" alt=""
-                 class="w-full h-96 bg-contain rounded-md">
+        <div class="mt-10 hidden md:block relative">
+            <img src="https://img-c.udemycdn.com/notices/featured_carousel_slide/image/34c63aef-8d1f-483e-b0ea-0ead94879e56.jpg" alt=""
+                 class="w-full h-64 bg-contain rounded-md">
+
+            <div class="absolute top-5 left-5 rounded-md bg-white p-4 shadow-md w-2/5 z-30">
+                <h2 class="text-2xl font-bold">
+                    Tag din karriere til næste niveau i dag!
+                </h2>
+
+                <p>
+                    Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser.
+                </p>
+            </div>
+
+            <div class="bg-black/20 w-full h-full absolute top-0 left-0 z-20"></div>
         </div>
 
+        <!-- Your Courses Section -->
         <div class="w-full relative">
             <button
-                @click="scrollOneLeft"
-                :disabled="!canScrollRight"
+                @click="scrollOneLeft(yourCoursesContainer, carouselStates.yourCourses)"
+                :disabled="!carouselStates.yourCourses.value.canScrollRight"
                 class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center lg:absolute lg:-left-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105 mt-4 lg:mt-0"
-                :class="{'opacity-30': !canScrollRight, 'hover:opacity-30': !canScrollRight}">
+                :class="{'opacity-30': !carouselStates.yourCourses.value.canScrollRight}">
                 <ChevronLeftIcon class="size-6 text-white"/>
             </button>
 
             <button
-                @click="scrollOneRight"
-                :disabled="!canScrollLeft"
+                @click="scrollOneRight(yourCoursesContainer, carouselStates.yourCourses)"
+                :disabled="!carouselStates.yourCourses.value.canScrollLeft"
                 class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center right-0 top-0 absolute lg:-right-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105"
-                :class="{'opacity-30': !canScrollLeft, 'hover:opacity-30': !canScrollLeft}">
+                :class="{'opacity-30': !carouselStates.yourCourses.value.canScrollLeft}">
                 <ChevronRightIcon class="size-6 text-white"/>
             </button>
 
-            <div
-                ref="scrollContainer"
-                class="w-full overflow-x-auto flex flex-grow-0 gap-6 mt-4 lg:mt-10 pb-4 carousel-container">
-                <template v-for="(course, index) in courses" :key="index">
-                    <CourseItem :course="course" class="flex-shrink-0 course-item"/>
-                </template>
+            <div class="flex flex-col gap-2 mt-4 lg:mt-10">
+                <h2 class="font-bold text-2xl dark:text-gray-200">Fortsæt med at se</h2>
+                <div
+                    ref="yourCoursesContainer"
+                    class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
+                    <template v-for="(course, index) in courses" :key="index">
+                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Courses Section -->
+        <div class="w-full relative">
+            <button
+                @click="scrollOneLeft(recommendedContainer, carouselStates.recommended)"
+                :disabled="!carouselStates.recommended.value.canScrollRight"
+                class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center lg:absolute lg:-left-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105 mt-4 lg:mt-0"
+                :class="{'opacity-30': !carouselStates.recommended.value.canScrollRight}">
+                <ChevronLeftIcon class="size-6 text-white"/>
+            </button>
+
+            <button
+                @click="scrollOneRight(recommendedContainer, carouselStates.recommended)"
+                :disabled="!carouselStates.recommended.value.canScrollLeft"
+                class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center right-0 top-0 absolute lg:-right-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105"
+                :class="{'opacity-30': !carouselStates.recommended.value.canScrollLeft}">
+                <ChevronRightIcon class="size-6 text-white"/>
+            </button>
+
+            <div class="flex flex-col gap-2 mt-4 lg:mt-10">
+                <h2 class="font-bold text-2xl dark:text-gray-200">Anbefalet til dig</h2>
+                <div
+                    ref="recommendedContainer"
+                    class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
+                    <template v-for="(course, index) in courses" :key="index">
+                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Rated Courses Section -->
+        <div class="w-full relative">
+            <button
+                @click="scrollOneLeft(topRatedContainer, carouselStates.topRated)"
+                :disabled="!carouselStates.topRated.value.canScrollRight"
+                class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center lg:absolute lg:-left-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105 mt-4 lg:mt-0"
+                :class="{'opacity-30': !carouselStates.topRated.value.canScrollRight}">
+                <ChevronLeftIcon class="size-6 text-white"/>
+            </button>
+
+            <button
+                @click="scrollOneRight(topRatedContainer, carouselStates.topRated)"
+                :disabled="!carouselStates.topRated.value.canScrollLeft"
+                class="h-12 w-12 rounded-full bg-black dark:bg-gray-700 text-white flex items-center justify-center right-0 top-0 absolute lg:-right-16 lg:top-[calc(50%-20px)] transition-all hover:scale-105"
+                :class="{'opacity-30': !carouselStates.topRated.value.canScrollLeft}">
+                <ChevronRightIcon class="size-6 text-white"/>
+            </button>
+
+            <div class="flex flex-col gap-2 mt-4 lg:mt-10">
+                <h2 class="font-bold text-2xl dark:text-gray-200">Bedst sælgende</h2>
+                <div
+                    ref="topRatedContainer"
+                    class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
+                    <template v-for="(course, index) in courses" :key="index">
+                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
+                    </template>
+                </div>
             </div>
         </div>
     </AppLayout>

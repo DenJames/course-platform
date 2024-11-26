@@ -37,22 +37,24 @@ const props = defineProps({
             Oprettelse
         </ResponsiveNavLink>
 
-        <div
-            v-if="$page.props.auth.user" class="space-y-1 pb-3 pt-2">
+        <div class="space-y-1 pb-3 pt-2">
             <ResponsiveNavLink
-                :href="route('dashboard')"
-                :active="route().current('dashboard')"
+                :href="route('welcome')"
+                :active="route().current('welcome')"
             >
-                Dashboard
+                Alle kurser
             </ResponsiveNavLink>
         </div>
 
-
-        <ResponsiveNavLink
-            :href="route('checkout')"
-        >
-            Tjek ud
-        </ResponsiveNavLink>
+        <div
+            v-if="$page.props.auth.user" class="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+                :href="route('welcome')"
+                :active="route().current('welcome')"
+            >
+                Mine kurser
+            </ResponsiveNavLink>
+        </div>
 
         <!-- Responsive Settings Options -->
         <div
