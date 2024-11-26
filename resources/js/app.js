@@ -1,11 +1,12 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import {createInertiaApp, router} from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import {createPinia} from "pinia";
+import {useCartStore} from "@/Stores/useCartStore.js";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia()
@@ -28,3 +29,8 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+router.on('navigate', () => {
+    const cartStore = useCartStore();
+    cartStore.reinitializeCart();
+})

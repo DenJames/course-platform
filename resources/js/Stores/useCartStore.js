@@ -1,9 +1,16 @@
 import { defineStore } from "pinia";
+import { usePage } from '@inertiajs/vue3';
 
 export const useCartStore = defineStore('cart', {
-    state: () => ({
-        items: JSON.parse(localStorage.getItem('cartItems')) || [],
-    }),
+    state: () => {
+        const user = usePage().props.auth?.user;
+        const storageKey = user ? `cartItems_${user.id}` : 'cartItems';
+        const savedItems = localStorage.getItem(storageKey);
+
+        return {
+            items: savedItems ? JSON.parse(savedItems) : [],
+        };
+    },
     getters: {
         totalItems() {
             return this.items.length;
@@ -13,6 +20,15 @@ export const useCartStore = defineStore('cart', {
         }
     },
     actions: {
+        getStorageKey() {
+            const user = usePage().props.auth?.user;
+            return user ? `cartItems_${user.id}` : 'cartItems';
+        },
+        reinitializeCart() {
+            const storageKey = this.getStorageKey();
+            const savedItems = localStorage.getItem(storageKey);
+            this.items = savedItems ? JSON.parse(savedItems) : [];
+        },
         addItem(item) {
             this.items.push(item);
             this.saveToLocalStorage();
@@ -27,11 +43,11 @@ export const useCartStore = defineStore('cart', {
             this.saveToLocalStorage();
         },
         isInCart(item) {
-            // retrieve local storage and use that to check
             return this.items.some(i => i.id === item.id);
         },
         saveToLocalStorage() {
-            localStorage.setItem('cartItems', JSON.stringify(this.items));
+            const storageKey = this.getStorageKey();
+            localStorage.setItem(storageKey, JSON.stringify(this.items));
         }
     },
 });
