@@ -226,7 +226,7 @@ onMounted(() => {
                     ref="yourCoursesContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
                     <template v-for="(course, index) in courses" :key="index">
-                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
+                        <CourseItem :course="course" :can-buy="false" class="flex-shrink-0 course-item"/>
                     </template>
                 </div>
             </div>

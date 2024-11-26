@@ -12,6 +12,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    canBuy: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 const cartStore = useCartStore();
@@ -65,7 +69,7 @@ const addToCartAndCheckout = () => {
 
             <!-- Base Content -->
             <div class="absolute left-0 right-0 p-3 h-full">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate text-nowrap">{{ course.title }}</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ course.author.name }}</p>
                 <p class="text-gray-900 dark:text-white font-bold mt-2">{{ course.price }} DKK</p>
 
@@ -74,7 +78,7 @@ const addToCartAndCheckout = () => {
                 </div>
 
                 <!-- Cart Buttons -->
-                <div class="mt-14 flex gap-2">
+                <div class="mt-14 flex gap-2" v-if="canBuy">
                     <button
                         v-if="!cartStore.isInCart(course)"
                         class="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 relative overflow-hidden"
@@ -154,7 +158,7 @@ const addToCartAndCheckout = () => {
 
             <div class="p-6 h-full flex flex-col">
                 <Link :href="route('welcome')" title="Gå til kursus">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h3>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate text-nowrap">{{ course.title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Udgivet af: {{ course.author.name }}</p>
 
                     <!-- Course Stats -->
@@ -184,7 +188,7 @@ const addToCartAndCheckout = () => {
                     </div>
 
                     <strong class="text-sm dark:text-gray-200">Beskrivelse:</strong>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{  course.description.length > 40 ? course.description.substring(0, 80) + '...' :  course.description }}</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{  course.description.length > 60 ? course.description.substring(0, 60) + '...' :  course.description }}</p>
 
                     <strong class="text-sm mb-1 dark:text-gray-200">Indhold:</strong>
                     <div class="space-y-2 mb-4">
@@ -210,7 +214,7 @@ const addToCartAndCheckout = () => {
                 </Link>
 
                 <!-- Overlay Cart Buttons -->
-                <div class="mt-auto flex gap-2">
+                <div class="mt-auto flex gap-2" v-if="canBuy">
                     <button
                         v-if="!cartStore.isInCart(course)"
                         class="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 relative overflow-hidden"
