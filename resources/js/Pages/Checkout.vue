@@ -21,7 +21,6 @@ const form = ref({
     personal: {
         name: '',
         email: '',
-        phone: '',
     },
     payment: {
         card: '',
@@ -50,14 +49,6 @@ const currentStepFields = computed(() => {
                     placeholder: 'din@email.dk',
                     required: true
                 },
-                {
-                    label: 'Telefon',
-                    key: 'phone',
-                    type: 'tel',
-                    group: 'personal',
-                    placeholder: '+45 12345678',
-                    required: false
-                }
             ];
         case 2:
             return [
@@ -104,11 +95,6 @@ const validateField = (field, value) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!value) errors.value[field] = ['Email er påkrævet'];
             else if (!emailRegex.test(value)) errors.value[field] = ['Ugyldig email adresse'];
-            break;
-
-        case 'personal.phone':
-            const phoneRegex = /^(\+45|0045|\(45\))?\s?[0-9]{8}$/;
-            if (value && !phoneRegex.test(value)) errors.value[field] = ['Ugyldigt telefonnummer'];
             break;
 
         case 'payment.card':
@@ -343,7 +329,6 @@ const closeOrderSummary = () => {
                         <h3 class="font-medium mb-2">Kundeoplysninger</h3>
                         <p>{{ form.personal.name }}</p>
                         <p>{{ form.personal.email }}</p>
-                        <p>{{ form.personal.phone }}</p>
                     </div>
 
                     <!-- Order Items -->
