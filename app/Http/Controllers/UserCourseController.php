@@ -14,7 +14,7 @@ class UserCourseController extends Controller
             ->with(['author'])
             ->get()
             ->map(function ($course) {
-                $course->completed = $course->lessons->count() >= Auth::user()->completedLessons->count();
+                $course->completed = $course->lessons->count() === Auth::user()->completedLessons()->whereIn('lesson_id', $course->lessons->pluck('id'))->count();
 
                 return $course;
             });
