@@ -179,7 +179,11 @@ const handleSubmit = () => {
         step.value++;
     } else {
         showOrderSummary.value = true;
-        router.post(route('user.store'), form.value.personal);
+
+        router.post(route('process.purchases'), {
+            ...form.value.personal,
+            items: cartStore.items,
+        });
     }
 };
 

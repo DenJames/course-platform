@@ -10,10 +10,10 @@ class LessonSeeder extends Seeder
     public function run(): void
     {
         // Total lessons to be generated
-        $totalLessons = 100;
+        $totalLessons = 1500;
 
-        // Courses IDs range from 1 to 10
-        $courseIds = range(1, 10);
+        // Specify the first course id and that last course id
+        $courseIds = range(11, 32);
 
         // Shuffle the courses to randomize the assignment of lessons
         shuffle($courseIds);
@@ -25,7 +25,7 @@ class LessonSeeder extends Seeder
         // Randomly assign the number of lessons to each course
         foreach ($courseIds as $courseId) {
             // Randomly decide how many lessons each course will have
-            $numLessonsForCourse = rand(5, 15); // Each course will have between 5 and 15 lessons
+            $numLessonsForCourse = rand(12, 100); // Each course will have between 5 and 15 lessons
             $numLessonsForCourse = min($numLessonsForCourse, $remainingLessons); // Ensure we don't exceed the total lessons
 
             // Generate lessons for the current course

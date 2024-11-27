@@ -49,8 +49,8 @@ const props = defineProps({
         <div
             v-if="$page.props.auth.user" class="space-y-1 pb-3 pt-2">
             <ResponsiveNavLink
-                :href="route('welcome')"
-                :active="route().current('welcome')"
+                :href="route('owned.courses.index')"
+                :active="route().current('owned.courses.index')"
             >
                 Mine kurser
             </ResponsiveNavLink>

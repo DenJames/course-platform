@@ -225,9 +225,9 @@ onMounted(() => {
                 <div
                     ref="yourCoursesContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <template v-for="(course, index) in courses" :key="index">
-                        <CourseItem :course="course" :can-buy="false" class="flex-shrink-0 course-item"/>
-                    </template>
+                    <Link :href="route('courses.show', course)" v-for="(course, index) in courses" :key="index">
+                        <CourseItem :course="course" :can-buy="false" class="flex-shrink-0 course-item !w-72"/>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -255,9 +255,9 @@ onMounted(() => {
                 <div
                     ref="recommendedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <template v-for="(course, index) in recommendedCourses" :key="index">
-                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
-                    </template>
+                    <Link :href="route('courses.show', course)" v-for="(course, index) in recommendedCourses" :key="index">
+                        <CourseItem :course="course" class="flex-shrink-0 course-item !w-72"/>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -285,9 +285,9 @@ onMounted(() => {
                 <div
                     ref="topRatedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <template v-for="(course, index) in bestSellingCourses" :key="index">
-                        <CourseItem :course="course" class="flex-shrink-0 course-item"/>
-                    </template>
+                    <Link :href="route('courses.show', course)" v-for="(course, index) in bestSellingCourses" :key="index">
+                        <CourseItem :course="course" class="flex-shrink-0 course-item !w-72"/>
+                    </Link>
                 </div>
             </div>
         </div>

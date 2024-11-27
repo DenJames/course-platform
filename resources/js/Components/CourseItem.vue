@@ -49,7 +49,7 @@ const addToCartAndCheckout = () => {
 
 <template>
     <div
-        class="group relative w-72 h-96 rounded-md bg-white dark:bg-gray-800 overflow-hidden cursor-pointer border border-gray-200 dark:border-gray-700"
+        class="group relative w-full h-96 rounded-md bg-white dark:bg-gray-800 overflow-hidden cursor-pointer border border-gray-200 dark:border-gray-700"
         @click="toggleOverlay"
     >
         <!-- Course Base Content -->
@@ -71,7 +71,7 @@ const addToCartAndCheckout = () => {
             <div class="absolute left-0 right-0 p-3 h-full">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate text-nowrap">{{ course.title }}</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ course.author.name }}</p>
-                <p class="text-gray-900 dark:text-white font-bold mt-2">{{ course.price }} DKK</p>
+                <p class="text-gray-900 dark:text-white font-bold mt-2" v-if="canBuy">{{ course.price }} DKK</p>
 
                 <div class="dark:text-gray-400 mt-2 text-sm font-bold italic" v-if="course.enrolled">
                     Enrolled
@@ -157,7 +157,7 @@ const addToCartAndCheckout = () => {
             </button>
 
             <div class="p-6 h-full flex flex-col">
-                <Link :href="route('welcome')" title="Gå til kursus">
+                <Link :href="route('courses.show', course)" title="Gå til kursus">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate text-nowrap">{{ course.title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Udgivet af: {{ course.author.name }}</p>
 

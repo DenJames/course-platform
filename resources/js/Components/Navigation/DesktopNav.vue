@@ -55,7 +55,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 
                 <NavLink
                     v-else
-                    :href="route('welcome')"
+                    :href="route('owned.courses.index')"
                 >
                     Mine kurser
                 </NavLink>
