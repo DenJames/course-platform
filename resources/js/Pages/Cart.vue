@@ -3,6 +3,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { useCartStore } from "@/Stores/useCartStore.js";
 import { computed } from "vue";
 import { router } from "@inertiajs/vue3";
+import { Link } from '@inertiajs/vue3';
 
 const cartStore = useCartStore();
 
@@ -55,15 +56,20 @@ const continueShopping = () => {
                                 :key="item.id"
                                 class="flex items-start gap-4 pb-6 border-b dark:border-gray-700 last:border-0 last:pb-0"
                             >
-                                <img
-                                    :src="item.image"
-                                    :alt="item.title"
-                                    class="w-24 h-24 object-cover rounded-lg"
-                                />
+                               <Link :href="route('courses.show', item)">
+                                   <img
+                                       :src="item.image"
+                                       :alt="item.title"
+                                       class="w-24 h-24 object-cover rounded-lg"
+                                   />
+                               </Link>
 
                                 <div class="flex-1">
                                     <div class="flex justify-between">
-                                        <h3 class="font-medium text-lg dark:text-gray-200">{{ item.title }}</h3>
+                                        <Link :href="route('courses.show', item)">
+                                            <h3 class="font-medium text-lg dark:text-gray-200 hover:underline">{{ item.title }}</h3>
+                                        </Link>
+
                                         <p class="font-semibold dark:text-gray-200">{{ item.price }} kr.</p>
                                     </div>
 
