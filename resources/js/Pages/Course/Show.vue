@@ -128,7 +128,7 @@ onBeforeUnmount(() => {
 
                     <button
                         v-else
-                        class="flex-1 flex items-center justify-center gap-2 bg-green-50 text-green-100 hover:bg-green-100 dark:bg-green-900/20  dark:hover:bg-green-900/30 font-bold py-3 px-4 rounded-lg transition-all duration-300"
+                        class="flex-1 flex items-center justify-center gap-2 bg-white/20 text-white hover:bg-green-900/30 font-bold py-3 px-4 rounded-lg transition-all duration-300"
                         @click.stop.prevent="cartStore.removeItem(course)"
                     >
                         Fjern fra kurv
