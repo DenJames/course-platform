@@ -6,6 +6,7 @@ import StarIcon from "@/Components/Icons/StarIcon.vue";
 import CourseItem from "@/Components/CourseItem.vue";
 import ChevronLeftIcon from "@/Components/Icons/ChevronLeftIcon.vue";
 import ChevronRightIcon from "@/Components/Icons/ChevronRightIcon.vue";
+import { useCourse } from "@/Composables/useCourse.js";
 
 defineProps({
     courses: {
@@ -226,7 +227,23 @@ onMounted(() => {
                     ref="yourCoursesContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
                     <Link :href="route('courses.show', course)" v-for="(course, index) in courses" :key="index">
-                        <CourseItem :course="course" :can-buy="false" class="flex-shrink-0 course-item !w-72"/>
+                        <CourseItem
+                            :show-badge="false"
+                            :can-buy="false"
+                            :show-progress="true"
+                            :course="{
+                                    ...course,
+                                    progress: useCourse().calculateProgress(course)
+                                }"
+                            class="relative"
+                        >
+                            <div
+                                v-if="course.completed_at"
+                                class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm"
+                            >
+                                Gennemført
+                            </div>
+                        </CourseItem>
                     </Link>
                 </div>
             </div>

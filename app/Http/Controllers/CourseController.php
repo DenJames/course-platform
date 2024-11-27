@@ -10,8 +10,27 @@ class CourseController extends Controller
 {
     public function index()
     {
+        $userCourses = Auth::user()
+            ->courses()
+            ->with(['author'])
+            ->select('courses.*')
+            ->selectSub(
+                function($query) {
+                    $query->from('completed_lessons')
+                        ->join('lessons', 'lessons.id', '=', 'completed_lessons.lesson_id')
+                        ->whereColumn('lessons.course_id', 'courses.id')
+                        ->where('completed_lessons.user_id', Auth::id())
+                        ->select('completed_lessons.created_at')
+                        ->latest('completed_lessons.created_at')
+                        ->limit(1);
+                },
+                'latest_completion'
+            )
+            ->orderByRaw('COALESCE(latest_completion, "1900-01-01") DESC')
+            ->get();
+
         return Inertia::render('Welcome', [
-            'courses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
+            'courses' => $userCourses,
             'recommendedCourses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
             'bestSellingCourses' => Course::with(['author'])->inRandomOrder()->take(10)->get(),
         ]);
@@ -37,8 +56,10 @@ class CourseController extends Controller
 
     public function resetProgress(Course $course)
     {
-        $lessons = $course->lessons()->pluck('id');
-        auth()->user()->completedLessons()->whereIn('lesson_id', $lessons)->detach();
+        $lessonIds = $course->lessons()->pluck('id');
+        $user = Auth::user();
+
+        $user->completedLessons()->wherePivotIn('lesson_id', $lessonIds)->detach();
 
         return back();
     }

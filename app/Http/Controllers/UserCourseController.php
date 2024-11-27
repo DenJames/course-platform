@@ -12,7 +12,12 @@ class UserCourseController extends Controller
         $userCourses = Auth::user()
             ->courses()
             ->with(['author'])
-            ->get();
+            ->get()
+            ->map(function ($course) {
+                $course->completed = $course->lessons->count() >= Auth::user()->completedLessons->count();
+
+                return $course;
+            });
 
         return Inertia::render('UserCourses', [
             'courses' => $userCourses,

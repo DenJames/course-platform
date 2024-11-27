@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Course extends Model
 {
@@ -15,7 +16,7 @@ class Course extends Model
 
     protected $guarded = [];
 
-    protected $appends = ['avarage_rating', 'total_ratings', 'lessons_count'];
+    protected $appends = ['avarage_rating', 'total_ratings', 'lessons_count', 'course_progress'];
 
     public function author(): BelongsTo
     {
@@ -60,6 +61,21 @@ class Course extends Model
     {
         return Attribute::make(
             get: fn () => $this->lessons->count(),
+        );
+    }
+
+    protected function courseProgress(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => function () {
+                if (!Auth::check()) {
+                    return 0;
+                }
+
+                $completedLessons = Auth::user()->completedLessons->where('course_id', $this->id);
+
+                return $completedLessons->count() / $this->lessons->count() * 100;
+            },
         );
     }
 }

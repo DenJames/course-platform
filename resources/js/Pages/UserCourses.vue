@@ -1,8 +1,9 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import {Head, Link} from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CourseItem from "@/Components/CourseItem.vue";
+import {useCourse} from "@/Composables/useCourse.js";
 
 const props = defineProps({
     courses: {
@@ -20,8 +21,8 @@ const filteredCourses = computed(() => {
             const matchesSearch = course.title.toLowerCase().includes(search.value.toLowerCase());
 
             if (filterStatus.value === 'all') return matchesSearch;
-            if (filterStatus.value === 'completed') return matchesSearch && course.completed_at;
-            if (filterStatus.value === 'in-progress') return matchesSearch && !course.completed_at;
+            if (filterStatus.value === 'completed') return matchesSearch && course.completed;
+            if (filterStatus.value === 'in-progress') return matchesSearch && !course.completed;
 
             return matchesSearch;
         });
@@ -29,11 +30,12 @@ const filteredCourses = computed(() => {
 
 const courseStats = computed(() => {
     const total = props.courses.length;
-    const completed = props.courses.filter(c => c.completed_at).length;
+    const completed = props.courses.filter(c => c.completed).length;
     const inProgress = total - completed;
 
     return { total, completed, inProgress };
 });
+
 </script>
 
 <template>
@@ -83,21 +85,25 @@ const courseStats = computed(() => {
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <template v-for="course in filteredCourses" :key="course.id">
+            <Link :href="route('courses.show', course)" v-for="(course, index) in filteredCourses" :key="index">
                 <CourseItem
                     :show-badge="false"
                     :can-buy="false"
-                    :course="course"
+                    :show-progress="true"
+                    :course="{
+                        ...course,
+                        progress: useCourse().calculateProgress(course)
+                    }"
                     class="relative"
                 >
                     <div
-                        v-if="course.completed_at"
+                        v-if="course.completed"
                         class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm"
                     >
                         Gennemført
                     </div>
                 </CourseItem>
-            </template>
+            </Link>
         </div>
     </AppLayout>
 </template>

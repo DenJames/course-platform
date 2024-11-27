@@ -16,11 +16,16 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    showProgress: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const cartStore = useCartStore();
 const isOverlayVisible = ref(false);
 const isAddingToCart = ref(false);
+
 
 const toggleOverlay = () => {
     isOverlayVisible.value = !isOverlayVisible.value;
@@ -71,6 +76,23 @@ const addToCartAndCheckout = () => {
             <div class="absolute left-0 right-0 p-3 h-full">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate text-nowrap">{{ course.title }}</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ course.author.name }}</p>
+
+                <!-- Add the progress bar here -->
+                <div v-if="showProgress" class="mt-24 mb-1">
+                    <div class="flex items-center justify-between text-sm mb-1">
+                        <span class="text-gray-600 dark:text-gray-400">Fremgang</span>
+                        <span class="text-gray-900 dark:text-gray-200">{{
+                                Math.round(course.course_progress)
+                            }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                        <div
+                            class="bg-green-500 h-1.5 rounded-full transition-all duration-300"
+                            :style="{ width: `${course.course_progress ?? 0}%` }"
+                        ></div>
+                    </div>
+                </div>
+
                 <p class="text-gray-900 dark:text-white font-bold mt-2" v-if="canBuy">{{ course.price }} DKK</p>
 
                 <div class="dark:text-gray-400 mt-2 text-sm font-bold italic" v-if="course.enrolled">
