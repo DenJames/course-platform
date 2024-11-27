@@ -1,12 +1,12 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted } from 'vue';
+import {Head, Link} from '@inertiajs/vue3';
+import {ref, onMounted, onUnmounted} from 'vue';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import StarIcon from "@/Components/Icons/StarIcon.vue";
 import CourseItem from "@/Components/CourseItem.vue";
 import ChevronLeftIcon from "@/Components/Icons/ChevronLeftIcon.vue";
 import ChevronRightIcon from "@/Components/Icons/ChevronRightIcon.vue";
-import { useCourse } from "@/Composables/useCourse.js";
+import {useCourse} from "@/Composables/useCourse.js";
 
 defineProps({
     courses: {
@@ -154,13 +154,15 @@ onMounted(() => {
         if (container) {
             const state = carouselStates[key];
             const updateScroll = () => updateScrollButtons(container, state);
+
+            // Force initial update of scroll buttons
+            updateScroll();
+
             container.addEventListener('scroll', updateScroll);
             cleanupFns.push(() => container.removeEventListener('scroll', updateScroll));
 
             const dragCleanup = setupDragHandlers(container, state);
             cleanupFns.push(dragCleanup);
-
-            updateScroll();
         }
     });
 
@@ -174,7 +176,7 @@ onMounted(() => {
     <Head title="Welcome"/>
 
     <AppLayout>
-        <!-- User welcome section remains unchanged -->
+        <!-- User welcome section -->
         <div v-if="$page.props.auth.user" class="flex gap-2 items-center">
             <div class="bg-purple-500 rounded-full w-16 h-16 flex items-center justify-center mt-10">
                 <h2 class="font-bold text-2xl dark:text-gray-200 text-white">DE</h2>
@@ -187,8 +189,10 @@ onMounted(() => {
         </div>
 
         <div class="mt-10 hidden md:block relative">
-            <img src="https://img-c.udemycdn.com/notices/featured_carousel_slide/image/34c63aef-8d1f-483e-b0ea-0ead94879e56.jpg" alt=""
-                 class="w-full h-64 bg-contain rounded-md">
+            <img
+                src="https://img-c.udemycdn.com/notices/featured_carousel_slide/image/34c63aef-8d1f-483e-b0ea-0ead94879e56.jpg"
+                alt=""
+                class="w-full h-64 bg-contain rounded-md">
 
             <div class="absolute top-5 left-5 rounded-md bg-white p-4 shadow-md w-2/5 z-30">
                 <h2 class="text-2xl font-bold">
@@ -196,7 +200,8 @@ onMounted(() => {
                 </h2>
 
                 <p>
-                    Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser.
+                    Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med
+                    onlinekurser. Tag din karriere til næste niveau med onlinekurser.
                 </p>
             </div>
 
@@ -232,10 +237,10 @@ onMounted(() => {
                             :can-buy="false"
                             :show-progress="true"
                             :course="{
-                                    ...course,
-                                    progress: useCourse().calculateProgress(course)
-                                }"
-                            class="relative"
+                                ...course,
+                                progress: useCourse().calculateProgress(course)
+                            }"
+                            class="relative course-item !w-72"
                         >
                             <div
                                 v-if="course.completed_at"
@@ -272,7 +277,8 @@ onMounted(() => {
                 <div
                     ref="recommendedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <Link :href="route('courses.show', course)" v-for="(course, index) in recommendedCourses" :key="index">
+                    <Link :href="route('courses.show', course)" v-for="(course, index) in recommendedCourses"
+                          :key="index">
                         <CourseItem :course="course" class="flex-shrink-0 course-item !w-72"/>
                     </Link>
                 </div>
@@ -302,7 +308,8 @@ onMounted(() => {
                 <div
                     ref="topRatedContainer"
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
-                    <Link :href="route('courses.show', course)" v-for="(course, index) in bestSellingCourses" :key="index">
+                    <Link :href="route('courses.show', course)" v-for="(course, index) in bestSellingCourses"
+                          :key="index">
                         <CourseItem :course="course" class="flex-shrink-0 course-item !w-72"/>
                     </Link>
                 </div>
