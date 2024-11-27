@@ -23,7 +23,7 @@
             Venligst opret en adgangskode for din konto.
         </div>
 
-        <form method="POST" action="{{ route('password.custom.store', $user) }}">
+        <form method="POST" action="{{ route('store.password', $user) }}">
             @csrf
 
             <div class="mt-4">
