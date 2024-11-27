@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [CourseController::class, 'index'])->name('welcome');
 
 Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
-Route::get('/courses/{category:slug}', CourseCategoryController::class)->name('courses.category');
+Route::get('/category/{category:slug}', CourseCategoryController::class)->name('courses.category');
 
 // Cart
 Route::get('/cart', [CartController::class, 'index'])->name('cart');

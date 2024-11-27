@@ -11,7 +11,7 @@ class CourseController extends Controller
     public function index()
     {
         $userCourses = Auth::user()
-            ->courses()
+            ?->courses()
             ->with(['author'])
             ->select('courses.*')
             ->selectSub(

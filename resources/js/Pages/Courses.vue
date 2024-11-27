@@ -45,7 +45,12 @@ const filteredCourses = computed(() => {
         </div>
 
         <div class="my-5">
-            <input type="text" placeholder="Find kursus" class="w-1/4 py-2 px-4 border border-gray-200 rounded-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200" v-model="search">
+            <input
+                type="text"
+                placeholder="Søg efter kursus"
+                class="w-1/4 py-2 px-4 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+                v-model="search"
+            >
         </div>
         <!-- Your Courses Section -->
         <div class="w-full relative grid grid-cols-4 gap-6">

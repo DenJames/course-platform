@@ -190,7 +190,7 @@ const handleSubmit = () => {
 const closeOrderSummary = () => {
     showOrderSummary.value = false;
     cartStore.clearCart();
-    router.visit(route('welcome'));
+    router.visit(route('owned.courses.index'));
 };
 </script>
 

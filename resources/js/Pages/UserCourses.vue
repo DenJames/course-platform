@@ -1,6 +1,6 @@
 <script setup>
 import {Head, Link} from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import {ref, computed, watch} from 'vue';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CourseItem from "@/Components/CourseItem.vue";
 import {useCourse} from "@/Composables/useCourse.js";
@@ -13,18 +13,28 @@ const props = defineProps({
 });
 
 const search = ref('');
-const filterStatus = ref('all'); // 'all', 'completed', 'in-progress'
+const filterStatus = ref('all');
+const filterCategory = ref('all');
 
 const filteredCourses = computed(() => {
     return props.courses
         .filter(course => {
+            // Search filter
             const matchesSearch = course.title.toLowerCase().includes(search.value.toLowerCase());
 
-            if (filterStatus.value === 'all') return matchesSearch;
-            if (filterStatus.value === 'completed') return matchesSearch && course.completed;
-            if (filterStatus.value === 'in-progress') return matchesSearch && !course.completed;
+            // Category filter
+            const matchesCategory = filterCategory.value === 'all' || course.category_id === filterCategory.value;
 
-            return matchesSearch;
+            // Status filter
+            let matchesStatus = true;
+            if (filterStatus.value === 'completed') {
+                matchesStatus = course.completed;
+            } else if (filterStatus.value === 'in-progress') {
+                matchesStatus = !course.completed;
+            }
+
+            // Combine all filters
+            return matchesSearch && matchesCategory && matchesStatus;
         });
 });
 
@@ -75,6 +85,22 @@ const courseStats = computed(() => {
                 <option value="all">Alle kurser</option>
                 <option value="in-progress">I gang</option>
                 <option value="completed">Gennemført</option>
+            </select>
+
+            <select
+                v-if="$page.props.categories?.length"
+                v-model="filterCategory"
+                class="py-2 px-4 pr-8 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+            >
+                <option value="all">Alle kategorier</option>
+                <option
+                    v-for="category in $page.props.categories"
+                    :key="category.id"
+                    :value="category.id"
+                >
+                    {{ category.name }}
+                </option>
+
             </select>
         </div>
 

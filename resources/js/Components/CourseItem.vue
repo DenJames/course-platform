@@ -36,7 +36,7 @@ const getStarWidth = (starPosition) => {
     return Math.max(0, Math.min(100, (rating - (starPosition - 1)) * 100));
 };
 
-const addToCartWithAnimation = () => {
+const addToCart = () => {
     isAddingToCart.value = true;
     cartStore.addItem(props.course);
     setTimeout(() => {
@@ -55,7 +55,7 @@ const addToCartAndCheckout = () => {
 <template>
     <div
         class="group relative w-full h-96 rounded-md bg-white dark:bg-gray-800 overflow-hidden cursor-pointer border border-gray-200 dark:border-gray-700"
-        @click="toggleOverlay"
+        @click.stop="toggleOverlay"
     >
         <!-- Course Base Content -->
         <div class="relative w-full h-full">
@@ -95,17 +95,13 @@ const addToCartAndCheckout = () => {
 
                 <p class="text-gray-900 dark:text-white font-bold mt-2" v-if="canBuy">{{ course.price }} DKK</p>
 
-                <div class="dark:text-gray-400 mt-2 text-sm font-bold italic" v-if="course.enrolled">
-                    Enrolled
-                </div>
-
                 <!-- Cart Buttons -->
                 <div class="mt-14 flex gap-2" v-if="canBuy">
                     <button
                         v-if="!cartStore.isInCart(course)"
                         class="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 relative overflow-hidden"
                         :class="{ 'animate-pulse': isAddingToCart }"
-                        @click.stop="addToCartWithAnimation"
+                        @click.stop.prevent="addToCart"
                     >
                         <span class="flex items-center gap-2" :class="{ 'opacity-0': isAddingToCart }">
                             <!-- Shopping Cart Icon -->
@@ -132,7 +128,7 @@ const addToCartAndCheckout = () => {
                     <button
                         v-else
                         class="flex-1 flex items-center justify-center gap-2 bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30 font-bold py-3 px-4 rounded-lg transition-all duration-300"
-                        @click.stop="cartStore.removeItem(course)"
+                        @click.stop.prevent="cartStore.removeItem(course)"
                     >
                         <!-- Checkmark Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
@@ -143,7 +139,7 @@ const addToCartAndCheckout = () => {
                     </button>
 
                     <button
-                        @click.stop="addToCartAndCheckout"
+                        @click.stop.prevent="addToCartAndCheckout"
                         class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold p-3 rounded-lg transition-colors duration-200"
                         :title="cartStore.isInCart(course) ? 'Gå til kurv' : 'Tilføj og gå til kurv'"
                     >
@@ -170,7 +166,7 @@ const addToCartAndCheckout = () => {
             <!-- Close Icon -->
             <button
                 class="absolute top-2 right-2 text-gray-600 dark:text-gray-400"
-                @click.stop="isOverlayVisible = false"
+                @click.stop.prevent="isOverlayVisible = false"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
@@ -240,8 +236,7 @@ const addToCartAndCheckout = () => {
                     <button
                         v-if="!cartStore.isInCart(course)"
                         class="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 relative overflow-hidden"
-                        :class="{ 'animate-pulse': isAddingToCart }"
-                        @click.stop="addToCartWithAnimation"
+                        @click.stop.prevent="addToCart"
                     >
                        <span class="flex items-center gap-2">
                             <!-- Shopping Cart Icon -->
@@ -257,7 +252,7 @@ const addToCartAndCheckout = () => {
                     <button
                         v-else
                         class="flex-1 flex items-center justify-center gap-2 bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30 font-bold py-3 px-4 rounded-lg transition-all duration-300"
-                        @click.stop="cartStore.removeItem(course)"
+                        @click.stop.prevent="cartStore.removeItem(course)"
                     >
                         <!-- Checkmark Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
@@ -268,7 +263,7 @@ const addToCartAndCheckout = () => {
                     </button>
 
                     <button
-                        @click.stop="addToCartAndCheckout"
+                        @click.stop.prevent="addToCartAndCheckout"
                         class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold p-3 rounded-lg transition-colors duration-200"
                         :title="cartStore.isInCart(course) ? 'Gå til kurv' : 'Tilføj og gå til kurv'"
                     >
