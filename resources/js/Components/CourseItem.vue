@@ -111,7 +111,7 @@ const addToCartAndCheckout = () => {
                         :class="{ 'animate-pulse': isAddingToCart }"
                         @click.stop.prevent="addToCart"
                     >
-                        <span class="flex items-center gap-2" :class="{ 'opacity-0': isAddingToCart }">
+                        <span class="flex items-center gap-2">
                             <!-- Shopping Cart Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
                                  stroke="currentColor" stroke-width="2">

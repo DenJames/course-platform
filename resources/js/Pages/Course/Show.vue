@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, onBeforeUnmount } from 'vue';
 import AppLayout from "@/Layouts/AppLayout.vue";
+import {useCartStore} from "@/Stores/useCartStore.js";
 
 const props = defineProps({
     course: {
@@ -20,6 +21,8 @@ const props = defineProps({
 
 const activeLessonId = ref(null);
 const videoEndTimer = ref(null);
+const isAddingToCart = ref(false);
+const cartStore = useCartStore();
 
 const totalDuration = computed(() => {
     return props.lessons.reduce((acc, lesson) => acc + lesson.duration, 0);
@@ -72,6 +75,11 @@ const markCourseComplete = () => {
     });
 };
 
+const addToCart = () => {
+    isAddingToCart.value = true;
+    cartStore.addItem(props.course);
+};
+
 // Clean up timer when component is unmounted
 onBeforeUnmount(() => {
     if (videoEndTimer.value) {
@@ -95,7 +103,6 @@ onBeforeUnmount(() => {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
-
                         <span>{{ formatDuration(totalDuration) }}</span>
                     </div>
                     <div class="flex items-center gap-2">
@@ -107,41 +114,29 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
 
+                <div v-if="!isEnrolled" class="mt-6">
+                    <button
+                        v-if="!cartStore.isInCart(course)"
+                        @click="addToCart"
+                        class="inline-flex items-center gap-2 bg-white text-purple-600 hover:bg-white/90 transition-colors duration-200 rounded-lg px-6 py-3 font-medium"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+                        Tilføj til kurv
+                    </button>
+
+                    <button
+                        v-else
+                        class="flex-1 flex items-center justify-center gap-2 bg-green-50 text-green-100 hover:bg-green-100 dark:bg-green-900/20  dark:hover:bg-green-900/30 font-bold py-3 px-4 rounded-lg transition-all duration-300"
+                        @click.stop.prevent="cartStore.removeItem(course)"
+                    >
+                        Fjern fra kurv
+                    </button>
+                </div>
+
                 <div v-if="isEnrolled" class="mt-6">
-                    <div class="bg-white/10 rounded-lg p-4">
-                        <div class="flex justify-between mb-2">
-                            <span>Fremgang</span>
-                            <span>{{ Math.round(progress) }}%</span>
-                        </div>
-                        <div class="w-full bg-white/20 rounded-full h-2">
-                            <div
-                                class="bg-green-500 h-2 rounded-full transition-all duration-300"
-                                :style="{ width: `${progress}%` }"
-                            ></div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex gap-2">
-                        <button
-                            @click="resetProgress"
-                            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-lg px-4 py-2"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            Nulstil fremgang
-                        </button>
-
-                        <button
-                            @click="markCourseComplete"
-                            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-lg px-4 py-2"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                            Marker kursus som færdig
-                        </button>
-                    </div>
+                    <!-- Existing enrolled user content -->
                 </div>
             </div>
 
