@@ -20,6 +20,14 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    badgeText: {
+        type: String,
+        default: 'Bedst anmeldt',
+    },
+    badgeColor: {
+        type: String,
+        default: 'bg-purple-500',
+    },
 });
 
 const cartStore = useCartStore();
@@ -60,9 +68,9 @@ const addToCartAndCheckout = () => {
         <!-- Course Base Content -->
         <div class="relative w-full h-full">
             <!-- Top rated badge -->
-            <div class="absolute top-4 right-4 bg-purple-600 px-3 py-1 rounded-full text-white text-sm"
+            <div :class="[badgeColor, 'absolute top-2 right-2 px-3 py-1 rounded-md text-white text-sm']"
                  v-if="showBadge">
-                Top rated
+                {{ badgeText }}
             </div>
 
             <!-- Background Image -->

@@ -310,7 +310,7 @@ onMounted(() => {
                     class="w-full overflow-x-auto flex flex-grow-0 gap-6 pb-4 carousel-container">
                     <Link :href="route('courses.show', course)" v-for="(course, index) in bestSellingCourses"
                           :key="index">
-                        <CourseItem :course="course" class="flex-shrink-0 course-item !w-72"/>
+                        <CourseItem :course="course" :show-badge="false" class="flex-shrink-0 course-item !w-72"/>
                     </Link>
                 </div>
             </div>
