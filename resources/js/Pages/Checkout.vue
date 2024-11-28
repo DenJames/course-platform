@@ -11,6 +11,7 @@ const cartStore = useCartStore();
 const showOrderSummary = ref(false);
 const orderId = ref(Math.random().toString(36).slice(2, 8).toUpperCase());
 const errors = ref({});
+const isLoading = ref(false);
 
 const steps = [
     {number: 1, title: 'Information'},
@@ -58,15 +59,17 @@ const currentStepFields = computed(() => {
                     type: 'text',
                     group: 'payment',
                     placeholder: '1234 5678 9012 3456',
-                    required: true
+                    required: true,
+                    maxLength: 19,
                 },
                 {
                     label: 'Udløbsdato',
                     key: 'expiry',
                     type: 'text',
                     group: 'payment',
-                    placeholder: 'MM/YY',
-                    required: true
+                    placeholder: 'MM/ÅÅ',
+                    required: true,
+                    maxLength: 5,
                 },
                 {
                     label: 'CVC',
@@ -74,13 +77,58 @@ const currentStepFields = computed(() => {
                     type: 'text',
                     group: 'payment',
                     placeholder: '123',
-                    required: true
+                    required: true,
+                    maxLength: 4,
                 }
             ];
         default:
             return [];
     }
 });
+
+const formatCardNumber = (value) => {
+    const cleaned = value.replace(/\s/g, '');
+    const groups = cleaned.match(/.{1,4}/g) || [];
+    return groups.join(' ').substr(0, 19);
+};
+
+const formatExpiry = (value) => {
+    const cleaned = value.replace(/[^\d]/g, '');
+    if (cleaned.length >= 2) {
+        return cleaned.slice(0, 2) + '/' + cleaned.slice(2);
+    }
+    return cleaned;
+};
+
+const isValidExpiryDate = (value) => {
+    if (!value) return false;
+
+    const [month, year] = value.split('/');
+    if (!month || !year) return false;
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear() % 100;
+    const currentMonth = currentDate.getMonth() + 1;
+
+    const enteredMonth = parseInt(month);
+    const enteredYear = parseInt(year);
+
+    if (enteredYear < currentYear) return false;
+    if (enteredYear === currentYear && enteredMonth < currentMonth) return false;
+
+    return enteredMonth >= 1 && enteredMonth <= 12;
+};
+
+const handleCardInput = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, '');
+    form.value.payment.card = formatCardNumber(value);
+};
+
+const handleExpiryInput = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, '');
+    form.value.payment.expiry = formatExpiry(value);
+    validateField('payment.expiry', form.value.payment.expiry);
+};
 
 const validateField = (field, value) => {
     errors.value[field] = [];
@@ -98,15 +146,14 @@ const validateField = (field, value) => {
             break;
 
         case 'payment.card':
-            const cardRegex = /^[0-9]{16}$/;
+            const cardRegex = /^(\d{4}\s){3}\d{4}$/;
             if (!value) errors.value[field] = ['Kortnummer er påkrævet'];
-            else if (!cardRegex.test(value.replace(/\s/g, ''))) errors.value[field] = ['Ugyldigt kortnummer'];
+            else if (!cardRegex.test(value)) errors.value[field] = ['Ugyldigt kortnummer'];
             break;
 
         case 'payment.expiry':
-            const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
             if (!value) errors.value[field] = ['Udløbsdato er påkrævet'];
-            else if (!expiryRegex.test(value)) errors.value[field] = ['Ugyldig udløbsdato (MM/YY)'];
+            else if (!isValidExpiryDate(value)) errors.value[field] = ['Ugyldig udløbsdato'];
             break;
 
         case 'payment.cvc':
@@ -133,14 +180,12 @@ const hasErrors = computed(() => {
 const isStepValid = computed(() => {
     const fields = currentStepFields.value;
 
-    // Check if all required fields are filled
     const allRequiredFieldsFilled = fields.every(field => {
         if (!field.required) return true;
         const value = form.value[field.group][field.key];
         return value && value.trim() !== '';
     });
 
-    // Check if there are no errors
     return allRequiredFieldsFilled && !hasErrors.value;
 });
 
@@ -178,12 +223,17 @@ const handleSubmit = () => {
     if (step.value < 2) {
         step.value++;
     } else {
-        showOrderSummary.value = true;
+        isLoading.value = true;
 
         router.post(route('process.purchases'), {
             ...form.value.personal,
             items: cartStore.items,
         });
+
+        setTimeout(() => {
+            showOrderSummary.value = true;
+            isLoading.value = false;
+        }, 2000);
     }
 };
 
@@ -243,7 +293,10 @@ const closeOrderSummary = () => {
                                         :placeholder="field.placeholder"
                                         class="w-full"
                                         :required="field.required"
-                                        @input="validateField(`${field.group}.${field.key}`, form[field.group][field.key])"
+                                        :maxlength="field.maxLength"
+                                        @input="field.key === 'card' ? handleCardInput($event) :
+                                               field.key === 'expiry' ? handleExpiryInput($event) :
+                                               validateField(`${field.group}.${field.key}`, form[field.group][field.key])"
                                     />
                                     <div v-if="errors[`${field.group}.${field.key}`]?.length"
                                          class="text-red-500 text-sm mt-1">
@@ -307,7 +360,7 @@ const closeOrderSummary = () => {
         </div>
 
         <!-- Order Summary Modal -->
-        <div v-if="true"
+        <div v-if="showOrderSummary"
              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 dark:text-gray-200">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
                 <div class="min-h-[600px] flex flex-col">
@@ -364,6 +417,10 @@ const closeOrderSummary = () => {
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div v-if="isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
         </div>
     </AppLayout>
 </template>
