@@ -43,17 +43,22 @@ class Course extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     protected function avarageRating(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->ratings->avg('rating') ?? 0,
+            get: fn () => $this->reviews->avg('rating') ?? 0,
         );
     }
 
     protected function totalRatings(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->ratings->count(),
+            get: fn () => $this->reviews->count(),
         );
     }
 

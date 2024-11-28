@@ -7,7 +7,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserCourseController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,12 +19,12 @@ Route::get('/category/{category:slug}', CourseCategoryController::class)->name('
 // Cart
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 
-
 Route::prefix('checkout')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
 
     Route::post('/process', [CheckoutController::class, 'store'])->name('process.purchases');
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::post('courses/{course}/mark-complete', [CourseController::class, 'markComplete'])
         ->name('courses.mark-complete');
 });
+
+Route::post('/review/{course}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::post('/courses/{course}/update', [ReviewController::class, 'update'])->name('reviews.update');
+Route::delete('/courses/{course}/reviews', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
 Route::get('/password/create/{user}', [PasswordController::class, 'create'])
     ->name('password.create')

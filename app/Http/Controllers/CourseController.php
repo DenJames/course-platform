@@ -38,7 +38,7 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
-        $lessons = $course->load('author')->lessons()
+        $lessons = $course->load(['author', 'reviews.user'])->lessons()
             ->orderBy('created_at')
             ->get()
             ->map(function ($lesson) {

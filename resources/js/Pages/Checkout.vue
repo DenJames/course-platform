@@ -309,54 +309,58 @@ const closeOrderSummary = () => {
         <!-- Order Summary Modal -->
         <div v-if="true"
              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 dark:text-gray-200">
-            <div
-                class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <h2 class="text-2xl font-semibold">Ordrebekræftelse #{{ orderId }}</h2>
-                        <p class="text-gray-600 dark:text-gray-400">{{ formattedDate }}</p>
-                    </div>
-                </div>
-
-                <div class="my-4 rounded-md bg-green-400 text-green-50 py-2 px-4 text-center w-full" v-if="!userExists">
-                    Vi har sendt en oprettelses mail til dig.
-                </div>
-
-                <div class="space-y-6">
-                    <!-- Customer Info -->
-                    <div>
-                        <h3 class="font-medium mb-2">Kundeoplysninger</h3>
-                        <p>{{ form.personal.name }}</p>
-                        <p>{{ form.personal.email }}</p>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+                <div class="min-h-[600px] flex flex-col">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold">Ordrebekræftelse #{{ orderId }}</h2>
+                            <p class="text-gray-600 dark:text-gray-400">{{ formattedDate }}</p>
+                        </div>
                     </div>
 
-                    <!-- Order Items -->
-                    <div>
-                        <h3 class="font-medium mb-4">Dine kurser</h3>
-                        <div class="space-y-4">
-                            <div v-for="item in cartStore.items" :key="item.id"
-                                 class="flex items-center gap-4 pb-4 border-b dark:border-gray-700">
-                                <img :src="item.image" :alt="item.title"
-                                     class="w-16 h-16 object-cover rounded"/>
-                                <div class="flex-1">
-                                    <h4 class="font-medium dark:text-gray-200">{{ item.title }}</h4>
-                                    <p class="text-gray-600 dark:text-gray-400">{{ item.price }} kr.</p>
+                    <div class="flex-1 space-y-6">
+                        <!-- Thank you message -->
+                        <div class="text-center pb-4 border-b dark:border-gray-700">
+                            <h3 class="text-2xl font-medium mb-2">Tak for din ordre, {{ form.personal.name }}!</h3>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                Vi har sendt en bekræftelse til {{ form.personal.email }}
+                            </p>
+                            <p v-if="!userExists" class="text-gray-600 dark:text-gray-400 mt-1">
+                                Vi har også sendt dig en mail med login oplysninger.
+                            </p>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">
+                                Dine kurser er klar! Hop ind og kom i gang med det samme 🚀
+                            </p>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div>
+                            <h3 class="font-medium mb-4">Dine kurser</h3>
+                            <div class="space-y-4 max-h-[380px] overflow-y-auto">
+                                <div v-for="item in cartStore.items" :key="item.id"
+                                     class="flex items-center gap-4 pb-4 border-b dark:border-gray-700">
+                                    <img :src="item.image" :alt="item.title"
+                                         class="w-16 h-16 object-cover rounded"/>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium dark:text-gray-200">{{ item.title }}</h4>
+                                        <p class="text-gray-600 dark:text-gray-400">{{ item.price }} kr.</p>
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="pt-4">
+                            <div class="flex justify-between font-semibold text-lg">
+                                <span>Total</span>
+                                <span>{{ cartStore.totalPrice }} kr.</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Total -->
-                    <div class="pt-4">
-                        <div class="flex justify-between font-semibold text-lg">
-                            <span>Total</span>
-                            <span>{{ cartStore.totalPrice }} kr.</span>
-                        </div>
-                    </div>
-
                     <button @click="closeOrderSummary"
-                            class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">
-                        Luk og fortsæt
+                            class="w-full mt-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                        Kom i gang med det samme!
                     </button>
                 </div>
             </div>
