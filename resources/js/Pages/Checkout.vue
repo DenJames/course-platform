@@ -296,6 +296,10 @@ const closeOrderSummary = () => {
                                     <span>{{ cartStore.totalPrice }} kr.</span>
                                 </div>
                             </div>
+
+                            <div class="flex justify-center mt-4">
+                                <img src="https://i.imgur.com/eKte6S2.png">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -303,7 +307,7 @@ const closeOrderSummary = () => {
         </div>
 
         <!-- Order Summary Modal -->
-        <div v-if="showOrderSummary"
+        <div v-if="true"
              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 dark:text-gray-200">
             <div
                 class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
@@ -312,15 +316,6 @@ const closeOrderSummary = () => {
                         <h2 class="text-2xl font-semibold">Ordrebekræftelse #{{ orderId }}</h2>
                         <p class="text-gray-600 dark:text-gray-400">{{ formattedDate }}</p>
                     </div>
-
-                    <button @click="closeOrderSummary"
-                            class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
                 </div>
 
                 <div class="my-4 rounded-md bg-green-400 text-green-50 py-2 px-4 text-center w-full" v-if="!userExists">

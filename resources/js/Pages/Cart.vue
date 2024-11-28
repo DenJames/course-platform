@@ -136,6 +136,10 @@ const continueShopping = () => {
                                 Gå til betaling
                             </button>
                         </div>
+
+                        <div class="mt-4 flex justify-center">
+                            <img src="https://i.imgur.com/eKte6S2.png">
+                        </div>
                     </div>
                 </div>
             </div>

@@ -33,11 +33,11 @@ const filteredCourses = computed(() => {
 
             <div class="absolute top-5 left-5 rounded-md bg-white p-4 shadow-md w-2/5 z-30">
                 <h2 class="text-2xl font-bold">
-                    Tag din karriere til næste niveau i dag!
+                    Investér i din fremtid - begynd din udvikling nu!
                 </h2>
 
                 <p>
-                    Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser. Tag din karriere til næste niveau med onlinekurser.
+                    Start din rejse mod nye karrieremuligheder i dag. Vores fleksible onlinekurser giver dig frihed til at lære, når det passer dig bedst.
                 </p>
             </div>
 
@@ -53,7 +53,7 @@ const filteredCourses = computed(() => {
             >
         </div>
         <!-- Your Courses Section -->
-        <div class="w-full relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="w-full relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template v-for="(course, index) in filteredCourses" :key="index">
                 <CourseItem :course="course" class="w-full" :show-badge="false" />
             </template>

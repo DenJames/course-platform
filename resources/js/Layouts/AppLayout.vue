@@ -193,7 +193,7 @@ onMounted(() => {
             </header>
 
             <!-- Page Content -->
-            <main class="px-4 sm:px-10 md:px-24 lg:px-64 xl:px-96">
+            <main class="px-4 sm:px-10 md:px-24 lg:px-64 xl:px-72">
                 <slot/>
             </main>
         </div>
