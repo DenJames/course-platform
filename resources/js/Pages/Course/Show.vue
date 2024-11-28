@@ -322,11 +322,11 @@ onBeforeUnmount(() => {
                                 <p class="text-gray-600 dark:text-gray-400">
                                     {{ lesson.description }}
                                 </p>
-                                <div class="mt-4" v-if="lesson.video_url">
+                                <div class="mt-4 flex justify-center" v-if="lesson.video_url">
                                     <video
                                         v-if="lesson.video_url"
                                         src="https://videos.pexels.com/video-files/27362710/12125786_2560_1440_25fps.mp4"
-                                        class="w-full rounded-lg"
+                                        class="h-80 rounded-lg"
                                         controls
                                         @ended="handleVideoEnded(lesson.id)"
                                     ></video>
