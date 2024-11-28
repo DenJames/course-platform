@@ -54,7 +54,7 @@ const courseStats = computed(() => {
     <AppLayout>
         <div class="mt-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg p-8 text-white">
             <h1 class="text-3xl font-bold mb-4">Mine kurser</h1>
-            <div class="grid grid-cols-3 gap-4 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div class="bg-white/10 rounded-lg p-4">
                     <p class="text-sm opacity-80">Samlet antal kurser</p>
                     <p class="text-2xl font-bold">{{ courseStats.total }}</p>
@@ -70,11 +70,11 @@ const courseStats = computed(() => {
             </div>
         </div>
 
-        <div class="my-8 flex gap-4">
+        <div class="my-8 flex flex-col md:flex-row gap-4">
             <input
                 type="text"
                 placeholder="Søg i dine kurser"
-                class="w-1/4 py-2 px-4 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+                class="w-full md:w-1/4 py-2 px-4 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
                 v-model="search"
             >
 
@@ -110,7 +110,7 @@ const courseStats = computed(() => {
             </p>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link :href="route('courses.show', course)" v-for="(course, index) in filteredCourses" :key="index">
                 <CourseItem
                     :show-badge="false"

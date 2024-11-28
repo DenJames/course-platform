@@ -48,12 +48,12 @@ const filteredCourses = computed(() => {
             <input
                 type="text"
                 placeholder="Søg efter kursus"
-                class="w-1/4 py-2 px-4 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+                class="w-full md:w-1/4 py-2 px-4 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
                 v-model="search"
             >
         </div>
         <!-- Your Courses Section -->
-        <div class="w-full relative grid grid-cols-4 gap-6">
+        <div class="w-full relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <template v-for="(course, index) in filteredCourses" :key="index">
                 <CourseItem :course="course" class="w-full" :show-badge="false" />
             </template>
