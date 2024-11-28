@@ -161,7 +161,7 @@ onBeforeUnmount(() => {
                     <h1 class="text-3xl font-bold mb-4">{{ course.title }}</h1>
 
                     <!-- Course Rating -->
-                    <div class="flex items-center gap-2 mb-4 text-gray-200">
+                    <a class="flex items-center gap-2 mb-4 text-gray-200" href="#reviews">
                         <span class="text-lg font-bold">{{ (course.avarage_rating).toFixed(1) }}</span>
                         <div class="flex gap-1">
                             <svg
@@ -179,7 +179,7 @@ onBeforeUnmount(() => {
                         <span class="text-sm">
                             ({{ course.total_ratings }} {{ course.total_ratings === 1 ? 'anmeldelse' : 'anmeldelser' }})
                         </span>
-                    </div>
+                    </a>
 
                     <p class="opacity-90 mb-6 text-sm">{{ course.description }}</p>
 
@@ -338,7 +338,7 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Reviews Section -->
-            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-sm mb-6">
+            <div id="reviews" class="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-sm mb-6">
                 <div class="p-6">
                     <div v-if="!isEnrolled" class="text-gray-600 dark:text-gray-400 mb-6">
                         Du skal være tilmeldt kurset for at kunne anmelde det.
